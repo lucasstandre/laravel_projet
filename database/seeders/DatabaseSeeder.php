@@ -23,7 +23,9 @@ class DatabaseSeeder extends Seeder
         ]);
         $this->call([
         // Vous pouvez ajouter d’autres "seeders" en les séparant par des virgules.
-            GenreSeeder::class
+            GenreSeeder::class,
+            PlaylistSeeder::class
+
         ]);
     }
 }
