@@ -10,7 +10,8 @@
                 <div class="p-6 text-gray-900 space-y-4">
                     <h3 class="font-semibold text-lg">Playlist - {{ $playlist->playlist }}</h3> {{-- Recupere le nom de la playlist (laribue playlist) --}}
                     <p class="font-normal"><span class="font-semibold">Createur :</span> {{-- Dire genre moi meme si le id est pareil --}}
-                    {{ $playlist->id_creator }}</p>
+                    {{ $playlist->id_creator }}</p> {{-- Dire genre moi meme si le id est pareil --}}
+                    {{ $playlist->user->name }}</p>
                     <p class="font-normal"><span class="font-semibold">Description :</span>
                     {{ $playlist->description }}</p>
                     <p class="font-normal"><span class="font-semibold">Link :</span> {{-- Faire un if else pour voir si cest public ou pas si cest public copier le link --}}

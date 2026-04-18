@@ -40,8 +40,11 @@ class PlaylistController extends Controller
      */
     public function show(Request $request, int $idPlaylist): View
     {
+        $playlist = Playlist::find($idPlaylist);
+        if(is_null($playlist))
+            return abort(404); //Redirige vers 404 not found
         return view('playlist/playlist', [
-            'playlist' => Playlist::find($idPlaylist)
+            'playlist' => $playlist
         ]);
     }
 

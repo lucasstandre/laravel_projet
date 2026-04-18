@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Playlist extends Model
 {
@@ -11,5 +12,9 @@ class Playlist extends Model
     protected $table = 'playlists';
     protected $primaryKey = 'id_playlist';
     public $timestamps = true;
-
+    public function user(): BelongsTo
+    {
+    // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
+    return $this->belongsTo(User::class, 'id_creator');
+    }
 }
