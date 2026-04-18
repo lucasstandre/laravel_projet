@@ -4,15 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Playlist;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class PlaylistController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index() : View
     {
-        //
+        return view('playlist/playlists', [
+        // D’autres paramètres peuvent être passés à la vue en les séparant par une virgule.
+        'playlists' => Playlist::All()
+        ]);
     }
 
     /**
@@ -34,9 +38,11 @@ class PlaylistController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Playlist $playlist)
+    public function show(Request $request, int $idPlaylist): View
     {
-        //
+        return view('playlist/playlist', [
+            'playlist' => Playlist::find($idPlaylist)
+        ]);
     }
 
     /**
