@@ -1,52 +1,59 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <div class="auth-head">
+        <h1 class="auth-title">S'inscrire</h1>
+        <p class="auth-subtitle">En vous inscrivant vous accederez aux fonctionnalités Sonora.</p>
+    </div>
+
+    <form method="POST" action="{{ route('register') }}" class="auth-form-grid">
         @csrf
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+        <div class="auth-field-wrap">
+            <label class="auth-label" for="name">username</label>
+            <div class="auth-input-wrap">
+                <input id="name" class="auth-input" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" placeholder="username">
+            </div>
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
+        <div class="auth-field-wrap">
+            <label class="auth-label" for="password">Mot de passe</label>
+            <div class="auth-input-wrap">
+                <input id="password" class="auth-input" type="password" name="password" required autocomplete="new-password" placeholder="********">
+            </div>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+        <div class="auth-secondary-grid">
+            <div class="auth-field-wrap">
+                <label class="auth-label" for="email">Courriel</label>
+                <div class="auth-input-wrap">
+                    <input id="email" class="auth-input" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" placeholder="nom@domaine.com">
+                </div>
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            </div>
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
+            <div class="auth-field-wrap">
+                <label class="auth-label" for="country">Pays</label>
+                <div class="auth-input-wrap">
+                    <input id="country" class="auth-input" type="text" name="country" value="{{ old('country') }}" required autocomplete="country-name" placeholder="France">
+                </div>
+                <x-input-error :messages="$errors->get('country')" class="mt-2" />
+            </div>
+        </div>
 
+        <div class="auth-field-wrap">
+            <label class="auth-label" for="password_confirmation">Confirmation</label>
+            <div class="auth-input-wrap">
+                <input id="password_confirmation" class="auth-input" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="********">
+            </div>
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+        <button type="submit" class="auth-cta">S'inscrire</button>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+        <div class="auth-footnote">
+            <span>Deja un compte ?</span>
+            <a class="auth-link" href="{{ route('login') }}">connexion</a>
         </div>
     </form>
 </x-guest-layout>
