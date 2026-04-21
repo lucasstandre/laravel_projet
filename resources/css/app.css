@@ -1,11 +1,274 @@
 @import 'tailwindcss';
 
+@plugin '@tailwindcss/forms';
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-sans:
+    Manrope, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@layer components {
+  .auth-shell {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 0.5rem;
+    background:
+      radial-gradient(circle at 92% 8%, rgb(16 48 95 / 50%), transparent 30%),
+      linear-gradient(105deg, #01060f 0%, #03152d 52%, #04142b 100%);
+  }
+
+  .auth-wrapper {
+    width: min(100%, 1260px);
+    min-height: 690px;
+    border-radius: 0;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.15fr 0.68fr;
+    box-shadow: 0 20px 45px rgb(0 0 0 / 46%);
+    border: 1px solid rgb(255 255 255 / 10%);
+  }
+
+  .auth-brand-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.6rem;
+    padding: 3.6rem 3rem;
+    background:
+      linear-gradient(95deg, #01050c 5%, #021935 54%, #072a56 100%);
+    position: relative;
+  }
+
+  .auth-brand-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, transparent 81%, rgb(255 255 255 / 11%) 100%);
+    pointer-events: none;
+  }
+
+  .auth-brand-link {
+    font-family: Sora, Manrope, ui-sans-serif, sans-serif;
+    font-size: clamp(2rem, 3.7vw, 3.2rem);
+    font-style: italic;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: #ffc500;
+    text-decoration: none;
+    width: fit-content;
+  }
+
+  .auth-brand-copy {
+    max-width: 30ch;
+    font-size: clamp(1.05rem, 1.45vw, 1.72rem);
+    line-height: 1.3;
+    font-weight: 600;
+    color: rgb(230 238 252 / 92%);
+  }
+
+  .auth-form-panel {
+    background: linear-gradient(165deg, #001630 0%, #031427 100%);
+    display: grid;
+    place-items: center;
+    padding: 1.9rem 2.4rem;
+  }
+
+  .auth-form-slot {
+    width: min(100%, 350px);
+    color: #dbe7ff;
+  }
+
+  .auth-head {
+    margin-bottom: 1.1rem;
+  }
+
+  .auth-title {
+    font-family: Sora, Manrope, ui-sans-serif, sans-serif;
+    font-size: clamp(1.9rem, 2.1vw, 2.25rem);
+    font-weight: 700;
+    color: #f3f8ff;
+    margin: 0;
+    text-align: center;
+  }
+
+  .auth-subtitle {
+    margin-top: 0.35rem;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    color: rgb(196 214 241 / 75%);
+    text-align: center;
+  }
+
+  .auth-session-status {
+    margin-bottom: 0.75rem;
+    color: #7efab4;
+  }
+
+  .auth-form-grid {
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .auth-secondary-grid {
+    display: grid;
+    gap: 0.65rem;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .auth-field-wrap {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .auth-label {
+    text-transform: lowercase;
+    font-size: 0.72rem;
+    color: rgb(184 206 236 / 82%);
+  }
+
+  .auth-input-wrap {
+    position: relative;
+  }
+
+  .auth-input-icon {
+    position: absolute;
+    left: 0.95rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgb(190 209 236 / 70%);
+    font-size: 0.95rem;
+    font-weight: 700;
+    width: 0.9rem;
+    text-align: center;
+  }
+
+  .auth-input {
+    width: 100%;
+    height: 2.9rem;
+    border-radius: 9999px;
+    border: 1px solid rgb(126 162 211 / 16%);
+    background: rgb(28 50 84 / 78%);
+    padding: 0 1rem 0 2.5rem;
+    color: #f1f7ff;
+    font-size: 0.9rem;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+  }
+
+  .auth-input::placeholder {
+    color: rgb(184 204 233 / 48%);
+  }
+
+  .auth-input:focus {
+    outline: none;
+    border-color: rgb(255 205 41 / 70%);
+    box-shadow: 0 0 0 3px rgb(255 197 0 / 22%);
+  }
+
+  .auth-options-row {
+    margin-top: 0.15rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: rgb(180 202 233 / 78%);
+  }
+
+  .auth-checkbox-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+  }
+
+  .auth-checkbox {
+    width: 0.9rem;
+    height: 0.9rem;
+    accent-color: #ffc500;
+  }
+
+  .auth-cta {
+    width: 100%;
+    height: 2.95rem;
+    margin-top: 0.45rem;
+    border: 0;
+    border-radius: 9999px;
+    background: #ffc500;
+    color: #0b1528;
+    font-size: 1.08rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 150ms ease, filter 150ms ease;
+  }
+
+  .auth-cta:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+  }
+
+  .auth-link {
+    font-size: 0.82rem;
+    color: #f8d750;
+    text-decoration: underline;
+    text-underline-offset: 0.12rem;
+  }
+
+  .auth-link:hover {
+    color: #ffe281;
+  }
+
+  .auth-footnote {
+    margin-top: 0.1rem;
+    text-align: center;
+    color: rgb(178 199 230 / 75%);
+    font-size: 0.76rem;
+  }
+
+  .auth-footnote span {
+    margin-right: 0.35rem;
+  }
+}
+
+@media (max-width: 960px) {
+  .auth-wrapper {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    border-radius: 0.8rem;
+  }
+
+  .auth-brand-panel {
+    padding: 2rem 1.5rem;
+    min-height: 220px;
+  }
+
+  .auth-form-panel {
+    padding: 1.5rem;
+  }
+
+  .auth-secondary-grid {
+    grid-template-columns: 1fr;
+  }
 }
