@@ -4,6 +4,18 @@
             {{ __('Liste des playlists') }}
         </h2>
     </x-slot>
+
+    <div class="flex gap-4 mb-6">
+        <x-search-bar action="/playlists" placeholder="Trouver une playlist..." />{{-- la search bar avec comme action /playlists le place holder est le texte dans la barre --}}
+        <form action="/playlists" method="GET">
+    <x-filtre {{-- la blade de filtre --}}
+        name="original"
+        label="Type"
+        :options="[1 => 'Originale', 0 => 'Partagée']"
+    />
+    </form>
+
+    </div>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
