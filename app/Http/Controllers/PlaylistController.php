@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PlaylistResource;
 use App\Models\Playlist;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Str;
+use App\Http\Resources\ProduitResource;
 
 
 class PlaylistController extends Controller
@@ -127,11 +129,12 @@ class PlaylistController extends Controller
     {
         if ($request->routeIs('insertionPlaylistApi')) {
             $validation = Validator::make($request->all(), [
-                'id_user' => 'required',
+                'id_creator' => 'required',
                 'playlist' => 'required',
-                'description' => 'required|max:250'
+                'description' => 'required|max:250',
+                'original' => 'nullable|boolean'
                 ], [
-                'id_user.required' => 'Veuillez entrer lle user',
+                'id_creator.required' => 'Veuillez entrer lle user',
                 'playlist.required' => 'Veuillez entrer un nom pour la playlist.',
                 'description.required' => 'Veuillez inscrire une description pour la playlist.',
                 'description.max' => 'Votre description de la playlist ne peut pas dépasser 250 caractères.'
@@ -146,15 +149,17 @@ class PlaylistController extends Controller
             // Il faut alors procéder à l’insertion du produit en BD.
             try {
                 Playlist::create([
-                    'id_user' => $contenuDecode['id_user'],
+                    'id_creator' => $contenuDecode['id_creator'],
                     'playlist' => $contenuDecode['playlist'],
-                    'description' => $contenuDecode['description']
+                    'description' => $contenuDecode['description'],
+                    'link' => '',
+                    'original' => $contenuDecode['original'] ?? false
                 ]);
 
                 return response()->json(['SUCCES' => 'La playlist a été ajouté avec succès.'], 200);
             } catch (QueryException $erreur) {
-                report($erreur);
-                return response()->json(['ERREUR' => 'La playlist n\'a pas été ajouté.'], 500);
+                report($erreur); // checker le message derruer car le link na pas de default ?
+                return response()->json(['ERREUR' => 'La playlist n\'a pas été ajouté.', 'details' => $erreur->getMessage()], 500);
             }
         }
     }
@@ -162,14 +167,24 @@ class PlaylistController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, int $idPlaylist): View
+    public function show(Request $request, int $idPlaylist)
     {
+        if ($request->routeIs('playlist')) {
         $playlist = Playlist::find($idPlaylist);
         if(is_null($playlist))
             return abort(404); //Redirige vers 404 not found
         return view('playlist/playlist', [
             'playlist' => $playlist
-        ]);
+        ]); // devrait display toute les toune aussi
+        }
+        // api
+        else if ($request->routeIs('playlistApi')) {
+        $playlist = Playlist::find($idPlaylist);
+        if (empty($playlist))
+        return response()->json(['ERREUR' => 'La playlist demandé est introuvable.'], 400);
+        return new PlaylistResource($playlist);
+        }
+
     }
 
     /**

@@ -11,7 +11,8 @@ class Playlist extends Model
     use HasFactory;
     protected $table = 'playlists';
     protected $primaryKey = 'id_playlist';
-    public $timestamps = true;
+    public $timestamps = false;
+    protected $fillable = ['id_creator', 'playlist', 'description', 'link', 'original'];
     public function user(): BelongsTo
     {
     // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
