@@ -236,6 +236,29 @@ class PlaylistController extends Controller
     }
 
     /**
+     * Display the specified resource by its public link.
+     */
+    public function playlistLink(Request $request, string $link)
+    {
+        $playlist = Playlist::where('link', $link)->first(); // un get marche pas il faut un first pour 1 seul record
+
+        if (empty($playlist)) {
+            if ($request->routeIs('playlistLink')) {
+                return response()->json(['ERREUR' => 'Le lien de la playlist est invalide.'], 404);
+            }
+            return abort(404);
+        }
+
+        if ($request->routeIs('playlistLinkApi')) {
+            return new PlaylistResource($playlist);
+        }
+
+        return view('playlist/playlist', [
+            'playlist' => $playlist
+        ]);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Request $request)

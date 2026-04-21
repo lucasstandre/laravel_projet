@@ -12,6 +12,7 @@ Route::get('/user', function (Request $request) {
 
 Route::controller(PlaylistController::class)->group(function() {
     Route::get('/playlist/{id}', 'show')->name('playlistApi');
+    Route::get('/link/{link}', 'playlistLink')->name('playlistLink');
     Route::get('/playlists', 'index')->name('playlistsApi');
 });
 

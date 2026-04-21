@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
 Route::controller(PlaylistController::class)->group(function() {
     Route::get('/playlists', 'index')->name('playlists');
     Route::get('/playlist/{id}', 'show')->name('playlist');
+    Route::get('/link/{link}', 'playlistLink')->name('playlistLink');
     Route::get('/modification/playlist', 'edit')->name('modificationPlaylist');
     Route::post('/enregistrement/playlist', 'update')->name('enregistrementPlaylist');
 });

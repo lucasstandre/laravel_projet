@@ -37,4 +37,18 @@ class User extends Authenticatable
     // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
     return $this->HasMany(Playlist::class, 'id_creator');
     }
+    // quand ca cree un user ca cree aussi la playlist de like
+    // plus facil a utiliser que boot !!!
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            Playlist::create([
+                'id_creator' => $user->id,
+                'playlist' => 'Liked',
+                'description' => 'Mes chansons aimées',
+                'link' => '',
+                'original' => true,
+            ]);
+        });
+    }
 }
