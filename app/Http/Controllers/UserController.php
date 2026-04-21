@@ -24,6 +24,7 @@ class UserController extends Controller
             $query->where('name', 'like', '%' . $search . '%');
         }
 
+        // Si search est vide, on ne fait pas la requete et on retourne une collection vide pour éviter de charger tous les utilisateurs
         $users = $search
             ? $query->orderBy('name')->paginate(10)->withQueryString()
             : collect();
@@ -104,7 +105,7 @@ class UserController extends Controller
     public function show(User $user): View
     {
         $playlists = $user->playlists()->paginate(10);
-        
+
         return view('users.show', [
             'user' => $user,
             'playlists' => $playlists
