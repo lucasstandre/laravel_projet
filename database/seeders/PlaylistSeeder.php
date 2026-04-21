@@ -32,6 +32,16 @@ class PlaylistSeeder extends Seeder
             'description' => 'Mes chansons aimers',
             'link' => '', //fonction de creation de link, seulement cree si la playlist est public
             'original' => true,
+            ],
+            [
+                //user, dans ce cas lier a lui meme
+            //'id_creator' => $user->id_utilisateur, lier a lui meme
+            'id_creator' => 1,
+
+            'playlist' => 'Playlist public de test',
+            'description' => 'Playlist public de test',
+            'link' => 'TEST', //fonction de creation de link, seulement cree si la playlist est public
+            'original' => true,
             ]
         ]);
     }
