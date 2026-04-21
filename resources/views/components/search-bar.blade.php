@@ -9,6 +9,6 @@
         class="search-input"
     >
     <button type="submit" class="search-button">
-        recherche
+        Recherche
     </button>
 </form>

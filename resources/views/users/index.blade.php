@@ -15,24 +15,22 @@
             </div>
         @endif
 
-        <!-- Tabs/Filtres -->
-        <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(126, 162, 211, 0.16); padding-bottom: 1rem; flex-wrap: wrap;">
-            @if ($hasSearched)
-                <a href="{{ route('users.index', ['search' => $search, 'filter' => 'playlist']) }}" style="padding: 0.5rem 1rem; border-radius: 9999px; background: rgba(126, 162, 211, {{ $filter == 'playlist' ? '0.3' : '0.18' }}); color: {{ $filter == 'playlist' ? '#f3f8ff' : 'rgb(196, 214, 241, 0.75)' }}; border: 1px solid rgba(126, 162, 211, 0.3); text-decoration: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 150ms ease;">Playlist</a>
-                <a href="{{ route('users.index', ['search' => $search, 'filter' => 'artiste']) }}" style="padding: 0.5rem 1rem; border-radius: 9999px; background: rgba(126, 162, 211, {{ $filter == 'artiste' ? '0.3' : '0.18' }}); color: {{ $filter == 'artiste' ? '#f3f8ff' : 'rgb(196, 214, 241, 0.75)' }}; border: none; text-decoration: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 150ms ease;">Artiste</a>
-                <a href="{{ route('users.index', ['search' => $search, 'filter' => 'album']) }}" style="padding: 0.5rem 1rem; border-radius: 9999px; background: rgba(126, 162, 211, {{ $filter == 'album' ? '0.3' : '0.18' }}); color: {{ $filter == 'album' ? '#f3f8ff' : 'rgb(196, 214, 241, 0.75)' }}; border: none; text-decoration: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 150ms ease;">Album</a>
-                <a href="{{ route('users.index', ['search' => $search, 'filter' => 'user']) }}" style="padding: 0.5rem 1rem; border-radius: 9999px; background: rgba(126, 162, 211, {{ $filter == 'user' ? '0.3' : '0.18' }}); color: {{ $filter == 'user' ? '#f3f8ff' : 'rgb(196, 214, 241, 0.75)' }}; border: 1px solid rgba(126, 162, 211, 0.3); text-decoration: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 150ms ease;">User</a>
-                <a href="{{ route('users.index', ['search' => $search, 'filter' => 'tracks']) }}" style="padding: 0.5rem 1rem; border-radius: 9999px; background: rgba(126, 162, 211, {{ $filter == 'tracks' ? '0.3' : '0.18' }}); color: {{ $filter == 'tracks' ? '#f3f8ff' : 'rgb(196, 214, 241, 0.75)' }}; border: none; text-decoration: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 150ms ease;">Tracks</a>
-            @endif
-        </div>
+        <!-- Filtre et recherche -->
+        <div class="flex gap-4 mb-6">
+            <x-search-bar action="/users" placeholder="Trouver un utilisateur..." />
+        <form action="/users" method="GET">
+        <x-filtre
+            name="pays"
+            label="Pays"
+        :options="[
+            //Va chercher dans la bd a place
 
-        <form method="GET" action="{{ route('users.index') }}" style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
-            <input type="text" name="search" placeholder="Filtrer par nom..." value="{{ $search }}" style="flex: 1; padding: 0.75rem 1.5rem; border: 1px solid rgba(126, 162, 211, 0.16); border-radius: 9999px; background: rgba(28, 50, 84, 0.78); color: #f1f7ff; font-size: 0.9rem;">
-            <button type="submit" style="padding: 0.75rem 1.5rem; border-radius: 9999px; background: #ffc500; color: #0b1528; border: none; font-weight: 800; cursor: pointer;">Filtrer</button>
-            @if ($search)
-                <a href="{{ route('users.index') }}" style="padding: 0.75rem 1.5rem; border-radius: 9999px; background: rgba(126, 162, 211, 0.18); color: #f1f7ff; border: 1px solid rgba(126, 162, 211, 0.3); text-decoration: none; font-weight: 600; cursor: pointer;">Réinitialiser</a>
-            @endif
+        ]"
+        />
+        </div>
         </form>
+
+
 
         @if ($users->count() > 0)
             <p style="margin-bottom: 1rem; font-size: 0.9rem; color: rgb(196, 214, 241, 0.6);">
