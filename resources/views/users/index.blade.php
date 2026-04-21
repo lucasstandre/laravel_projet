@@ -122,7 +122,7 @@
             <p style="text-align: center; color: rgb(196, 214, 241, 0.6); padding: 2rem;">Aucun utilisateur trouvé pour "<strong style="color: #ffc500;">{{ $search }}</strong>".</p>
         @else
             <p style="text-align: center; color: rgb(196, 214, 241, 0.6); padding: 3rem; font-size: 1.1rem;">
-                🔍 Tapez le nom d'un utilisateur pour commencer...
+                Tapez le nom d'un utilisateur pour commencer...
             </p>
         @endif
     </div>

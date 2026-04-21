@@ -42,7 +42,7 @@
         </div>
 
         <div class="auth-field-wrap">
-            <label class="auth-label" for="password_confirmation">Confirmation</label>
+            <label class="auth-label" for="password_confirmation">Confirmation mot de passe</label>
             <div class="auth-input-wrap">
                 <input id="password_confirmation" class="auth-input" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="********">
             </div>
