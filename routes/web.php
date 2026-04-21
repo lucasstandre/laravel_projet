@@ -24,6 +24,12 @@ Route::middleware('auth')->group(function () {
 Route::controller(PlaylistController::class)->group(function() {
     Route::get('/playlists', 'index')->name('playlists');
     Route::get('/playlist/{id}', 'show')->name('playlist');
+    Route::get('/modification/playlist', 'edit')->name('modificationPlaylist');
+    Route::post('/enregistrement/playlist', 'update')->name('enregistrementPlaylist');
+});
+
+Route::middleware('auth')->controller(PlaylistController::class)->group(function() {
+    Route::get('/mes-playlists', 'mesPlaylists')->name('mes-playlists');
 });
 
 Route::controller(UserController::class)->group(function() {

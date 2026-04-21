@@ -175,9 +175,18 @@ class PlaylistController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Playlist $playlist)
+    public function edit(Request $request)
     {
-        //
+        $id = $request->input('id_playlist');
+        $playlist = Playlist::find($id);
+
+        if (is_null($playlist)) {
+            return abort(404); // Au cas où le produit n'existerait plus
+        }
+
+        return view('playlist/formulairePlaylist', [
+            'playlist' => $playlist
+        ]);
     }
 
     /**
