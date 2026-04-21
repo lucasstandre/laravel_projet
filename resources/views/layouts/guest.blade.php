@@ -23,6 +23,10 @@
 
             <div class="auth-form-panel">
                 <div class="auth-form-slot">
+
+                    <div class="mt-6 max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        @include('messageFlash')
+                    </div>
                     {{ $slot }}
                 </div>
             </div>
