@@ -18,6 +18,25 @@ use App\Http\Resources\ProduitResource;
 class PlaylistController extends Controller
 {
     /**
+     * Pogne la playlist de like
+     */
+    public function likePlaylist() : JsonResponse
+    {
+        //pogne le user
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['ERREUR' => 'Unauthorized'], 401);
+        }
+
+        $playlist_id = Playlist::where('id_creator', $user->id)->where('playlist', 'Liked')->get(); // double query
+
+        return response()->json([
+            'user_id' => $user->id,
+            'playlist_id' => $playlist_id
+        ], 200);
+    }
+    /**
      * Montre les playlist du user ( pour lapi)
      */
     public function mesPlaylists(): JsonResponse
@@ -36,7 +55,7 @@ class PlaylistController extends Controller
             'playlists' => $playlists
         ], 200);
     }
-        /**
+    /**
      * Generate a public link for a playlist
      */
     public function generateLink(Request $request, int $idPlaylist): JsonResponse
@@ -89,7 +108,7 @@ class PlaylistController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request) : View
+    public function index(Request $request)
     {
         $query = Playlist::query(); // contructeur de requete pour commencer une query
         // on check si le link est par vide car si il les la playlist nest pas public
@@ -107,6 +126,10 @@ class PlaylistController extends Controller
 
         $playlists = $query->get();
 
+        if ($request->routeIs('playlistsApi') || $request->wantsJson()) {
+            return response()->json(['playlists' => $playlists], 200);
+        }
+
         return view('playlist/playlists', [
         // D’autres paramètres peuvent être passés à la vue en les séparant par une virgule.
         'playlists' => $playlists // retourn toute les playlists apres la requete, par default sa pogne all
@@ -121,20 +144,23 @@ class PlaylistController extends Controller
     {
         //
     }
-
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, $idPlaylist = null)
     {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['ERREUR' => 'Unauthorized'], 401);
+        }
+
         if ($request->routeIs('insertionPlaylistApi')) {
             $validation = Validator::make($request->all(), [
-                'id_creator' => 'required',
                 'playlist' => 'required',
                 'description' => 'required|max:250',
                 'original' => 'nullable|boolean'
                 ], [
-                'id_creator.required' => 'Veuillez entrer lle user',
                 'playlist.required' => 'Veuillez entrer un nom pour la playlist.',
                 'description.required' => 'Veuillez inscrire une description pour la playlist.',
                 'description.max' => 'Votre description de la playlist ne peut pas dépasser 250 caractères.'
@@ -149,17 +175,39 @@ class PlaylistController extends Controller
             // Il faut alors procéder à l’insertion du produit en BD.
             try {
                 Playlist::create([
-                    'id_creator' => $contenuDecode['id_creator'],
+                    'id_creator' => $user->id, // pogne le id du user
                     'playlist' => $contenuDecode['playlist'],
                     'description' => $contenuDecode['description'],
                     'link' => '',
-                    'original' => $contenuDecode['original'] ?? false
+                    'original' => $contenuDecode['original'] ?? false // si ya rien cest false si cest specifier cest true
                 ]);
 
                 return response()->json(['SUCCES' => 'La playlist a été ajouté avec succès.'], 200);
             } catch (QueryException $erreur) {
                 report($erreur); // checker le message derruer car le link na pas de default ?
                 return response()->json(['ERREUR' => 'La playlist n\'a pas été ajouté.', 'details' => $erreur->getMessage()], 500);
+            }
+        }
+        elseif ($request->routeIs('copyPlaylistApi')) {
+            $playlistCopy = Playlist::find($idPlaylist);
+
+            if (!$playlistCopy) {
+                return response()->json(['ERREUR' => 'La playlist à copier est introuvable.'], 404);
+            }
+
+            try {
+                Playlist::create([
+                    'id_creator' => $user->id,
+                    'playlist' => 'Copie de ' . $playlistCopy->playlist . ' par ' . $playlistCopy->user->name, // pogne le name du createur original
+                    'description' => $playlistCopy['description'],
+                    'link' =>   '', // si ya pas de link c vide
+                    'original' => false // par default false pcq cest pas ta playlist mais celle de
+                ]);
+
+                return response()->json(['SUCCES' => 'La playlist a été copier avec succès.'], 200);
+            } catch (QueryException $erreur) {
+                report($erreur); // checker le message derruer car le link na pas de default ?
+                return response()->json(['ERREUR' => 'La playlist n\'a pas été copier.', 'details' => $erreur->getMessage()], 500);
             }
         }
     }
