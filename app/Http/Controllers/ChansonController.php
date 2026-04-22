@@ -26,7 +26,7 @@ class ChansonController extends Controller
         }
 
         if ($request->has('id_playlist')){
-            query->whereHas('playlists', function($q) use ($request){
+            $query->whereHas('playlists', function($q) use ($request){ // Jai mit $query a place de query pcq ca em donnait une erreur normal ?
                 $q->where('playlists.id_playlist', $request->id_playlist);
             });
         }

@@ -21,6 +21,6 @@ class Playlist extends Model
     public function chansons()
     {
     return $this->belongsToMany(Chanson::class, 'ta_playlist_chanson', 'id_playlist', 'id_chanson')
-                ->withPivot('date_ajout'); // pour ajouter les autre collone
+                ->withPivot('date_ajout'); // pour ajouter les autre collone on devrait mettre
     }
 }

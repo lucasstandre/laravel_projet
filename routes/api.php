@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->controller(PlaylistController::class)->group(
     Route::post('/copy/playlist/{id}', 'store')->name('copyPlaylistApi');
     Route::get('/mesLikes', 'likePlaylist')->name('likePlaylistApi');
     Route::post('/addToPlaylist/{id}/chanson/{chansonId}', 'addChanson')->name('addChansonApi');
-    Route::delete('/playlist/{id}/chanson/{chansonId}', 'removeChanson')->name('removeChansonApi');
+    Route::delete('/removeToPlaylist/{id}/chanson/{chansonId}', 'removeChanson')->name('removeChansonApi');
 });
 
 Route::post('/token', [RegisteredUserController::class, 'show'])->name('token');

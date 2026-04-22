@@ -13,12 +13,42 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Str;
 use App\Http\Resources\ProduitResource;
-
+use App\Models\Chanson;
 
 class PlaylistController extends Controller
 {
     /**
-     * Pogne la playlist de like
+     * Suprime une chanson a la playlist
+     */
+    public function removeChanson(int $idPlaylist, int $idChanson) : JsonResponse
+    {
+        //pogne le user
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['ERREUR' => 'Unauthorized'], 401);
+        }
+        $chanson = Chanson::find($idChanson);
+        if (!$chanson) {
+        return response()->json(['ERREUR' => 'La chanson introuvable'], 404);
+        }
+        $playlist = Playlist::where('id_creator', $user->id)->where('id_playlist', $idPlaylist)->first();// double query, obliger dituliser first
+        if (!$playlist) {
+        return response()->json(['ERREUR' => 'Playlist introuvable'], 404);
+        }
+        try {
+        // on remove via attach
+        $playlist->chansons()->detach($idChanson);
+
+        return response()->json(['SUCCES' => 'Chanson ' .$chanson->nom . ' suprimer de la playlist ' . $playlist->playlist], 200); // dit quoi
+
+        } catch (QueryException $erreur) {
+            return response()->json(['ERREUR' => 'Le remove na pas marcher', 'details' => $erreur->getMessage()], 500);
+        } // remove la toune ou refuse
+    }
+
+    /**
+     * Ajoute une toune a la playlist
      */
     public function addChanson(int $idPlaylist, int $idChanson) : JsonResponse
     {
@@ -28,22 +58,22 @@ class PlaylistController extends Controller
         if (!$user) {
             return response()->json(['ERREUR' => 'Unauthorized'], 401);
         }
-
+        $chanson = Chanson::find($idChanson);
         $playlist = Playlist::where('id_creator', $user->id)->where('id_playlist', $idPlaylist)->first();// double query, obliger dituliser first
         if (!$playlist) {
         return response()->json(['ERREUR' => 'Playlist introuvable'], 404);
         }
         try {
-        // on add vie attach
+        // on add via attach
         $playlist->chansons()->attach($idChanson, [
             'date_ajout' => now()
         ]);
 
-        return response()->json(['SUCCES' => 'Chanson ajoutée à la playlist'], 200);
+        return response()->json(['SUCCES' => 'Chanson ' .$chanson->nom . ' ajoutée à la playlist ' . $playlist->playlist], 200); // dit quoi
 
     } catch (QueryException $erreur) {
         return response()->json(['ERREUR' => 'L\'ajout a échoué', 'details' => $erreur->getMessage()], 500);
-    } // add chanson here
+    } // add la toune ou refuse
 
     }
     /**
