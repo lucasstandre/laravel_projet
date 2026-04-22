@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
+            'name' => 'Sonora',
             'email' => 'test@example.com',
             'password' => Hash::make('password'), // forcer a faire un password password pcq ca marchait pu
             'role' => 1,
@@ -35,7 +35,9 @@ class DatabaseSeeder extends Seeder
             GenreSeeder::class,
             PlaylistSeeder::class,
              AlbumSeeder::class,
-            ChansonSeeder::class
+            ChansonSeeder::class,
+            PlaylistChansonSeeder::class
+
         ]);
     }
 }

@@ -28,6 +28,15 @@
                     <a href="/link/{{$playlist->link}}" class="font-normal"><span class="font-semibold">Link :</span> {{-- Faire un if else pour voir si cest public ou pas si cest public copier le link --}}
                     {{ 'localhost/link/' . $playlist->link }} </a>
                     @endif
+                    @if ($playlist->chansons->isNotEmpty())
+                        <h1 class="font-semibold"> Chansons </h1>
+                            @foreach ($playlist->chansons as $chanson)
+                                <p>Titre : {{ $chanson->nom }}</p>
+                                <p>Ajoutée le : {{ $chanson->pivot->date_ajout }}</p>
+                            @endforeach
+                    @else
+                        <h1 class="font-semibold"> Aucune chansons </h1>
+                    @endif
                 </div>
             </div>
         </div>

@@ -33,7 +33,7 @@ Route::controller(PlaylistController::class)->group(function() {
 });
 
 Route::middleware('auth')->controller(PlaylistController::class)->group(function() {
-    Route::get('/mes-playlists', 'mesPlaylists')->name('mes-playlists');
+    Route::get('/mesPlaylists', 'mesPlaylists')->name('mesPlaylists');
 });
 
 Route::controller(UserController::class)->group(function() {

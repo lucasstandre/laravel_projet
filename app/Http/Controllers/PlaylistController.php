@@ -20,6 +20,35 @@ class PlaylistController extends Controller
     /**
      * Pogne la playlist de like
      */
+    public function addChanson(int $idPlaylist, int $idChanson) : JsonResponse
+    {
+        //pogne le user
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['ERREUR' => 'Unauthorized'], 401);
+        }
+
+        $playlist = Playlist::where('id_creator', $user->id)->where('id_playlist', $idPlaylist)->first();// double query, obliger dituliser first
+        if (!$playlist) {
+        return response()->json(['ERREUR' => 'Playlist introuvable'], 404);
+        }
+        try {
+        // on add vie attach
+        $playlist->chansons()->attach($idChanson, [
+            'date_ajout' => now()
+        ]);
+
+        return response()->json(['SUCCES' => 'Chanson ajoutée à la playlist'], 200);
+
+    } catch (QueryException $erreur) {
+        return response()->json(['ERREUR' => 'L\'ajout a échoué', 'details' => $erreur->getMessage()], 500);
+    } // add chanson here
+
+    }
+    /**
+     * Pogne la playlist de like
+     */
     public function likePlaylist() : JsonResponse
     {
         //pogne le user
@@ -29,11 +58,12 @@ class PlaylistController extends Controller
             return response()->json(['ERREUR' => 'Unauthorized'], 401);
         }
 
-        $playlist_id = Playlist::where('id_creator', $user->id)->where('playlist', 'Liked')->get(); // double query
+        $playlist = Playlist::where('id_creator', $user->id)->where('playlist', 'Liked')->first(); // double query
 
         return response()->json([
             'user_id' => $user->id,
-            'playlist_id' => $playlist_id
+            'playlist_id' => $playlist->id_playlist,
+            'chansons' => $playlist->chansons
         ], 200);
     }
     /**
