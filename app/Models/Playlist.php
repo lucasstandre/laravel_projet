@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Playlist extends Model
 {
@@ -16,5 +17,9 @@ class Playlist extends Model
     {
     // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
     return $this->belongsTo(User::class, 'id_creator');
+    }
+    public function chansons(): BelongsToMany
+    {
+        return $this->belongsToMany(Chanson::class, 'ta_playlist_chanson', 'id_playlist', 'id_chanson');
     }
 }

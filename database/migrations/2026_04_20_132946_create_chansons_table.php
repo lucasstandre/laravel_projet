@@ -21,10 +21,14 @@ return new class extends Migration
             $table->date('date_sortie');
             $table->string('fichier',256);
             $table->integer('like')->default(0);
-            $table->smallInteger('id_role')->unsigned();
-            $table->smallInteger('id_status')->unsigned();
-            $table->smallInteger('id_localisation')->unsigned();
-            $table->smallInteger('id_social')->unsigned();
+            $table->Integer('id_album')->unsigned();
+            $table->unsignedBigInteger('id_genre');
+            $table->bigInteger('id_artiste')->unsigned();
+        });
+        Schema::table('chansons', function (Blueprint $table){
+            $table->foreign('id_album')->references('id_album')->on('albums');
+            $table->foreign('id_genre')->references('id_genre')->on('genres');
+            //$table->foreign('id_artiste')->references('id_utilisateur')->on('utilisateurs');
         });
     }
 

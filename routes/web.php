@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ChansonController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,6 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Route des controlleurs
+
 Route::controller(PlaylistController::class)->group(function() {
     Route::get('/playlists', 'index')->name('playlists');
     Route::get('/playlist/{id}', 'show')->name('playlist');
@@ -29,6 +32,26 @@ Route::controller(PlaylistController::class)->group(function() {
 Route::controller(UserController::class)->group(function() {
     Route::get('/users', 'index')->name('users.index');
     Route::get('/users/{user}', 'show')->name('users.show');
+});
+
+Route::controller(ChansonController::class)->group(function(){
+    Route::get('/chansons', 'index')->name('chansons');
+
+    Route::get('/chansons/create', 'create')->name('chansons.create');
+    Route::post('/chansons', 'store')->name('chansons.store');
+
+    Route::get('/chansons/{chanson}/edit', 'edit')->name('chansons.edit');
+    Route::put('/chansons/{chanson}', 'update')->name('chansons.update');
+
+    Route::delete('/chansons/{chanson}', 'destroy')->name('chansons.destroy');
+
+    Route::get('/chansons/{chanson}', 'show')->name('chanson');
+});
+
+Route::controller(AlbumController::class)->group(function(){
+    Route::get('/albums', 'index')->name('albums');
+
+
 });
 
 Route::middleware('auth')->controller(UserController::class)->group(function() {

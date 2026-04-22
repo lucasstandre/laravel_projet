@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Genre extends Model
+class Album extends Model
 {
     use HasFactory;
-    protected $table = 'genres';
-    protected $primaryKey = 'id_genre';
+    protected $table = 'albums';
+    protected $primaryKey = 'id_album';
     public $timestamps = false;
 }
