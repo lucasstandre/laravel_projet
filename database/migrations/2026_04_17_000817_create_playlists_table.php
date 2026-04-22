@@ -20,10 +20,11 @@ return new class extends Migration
             $table->string('description');
             $table->string('link');
             $table->boolean('original');
-            // foreign key
-            //Schema::table('playlists', function (Blueprint $table) {
-           // $table->foreign('id_creator')->references('id_utilisateur')->on('utilisateur');
-            //});
+
+        });
+        // foreign key
+        Schema::table('playlists', function (Blueprint $table) {
+            $table->foreign('id_creator')->references('id')->on('users');
         });
 
     }

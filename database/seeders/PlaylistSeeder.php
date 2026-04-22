@@ -13,31 +13,26 @@ class PlaylistSeeder extends Seeder
      */
     public function run(): void
     {
+        //maitenant dans booted de user
         DB::table('playlists')->insert([
             [
-                //user, dans ce cas lier a lui meme
-            //'id_creator' => $user->id_utilisateur, lier a lui meme
+            // ca va etre sonora id_creator 1
             'id_creator' => 1,
-            'playlist' => 'Liked',
-            'description' => 'Mes chansons aimers',
-            'link' => '', //fonction de creation de link, seulement cree si la playlist est public
+            'playlist' => 'Top 10 de la semaine',
+            'description' => 'Top 10 chanson de la semaine',
+            'link' => 'TOP10', //fonction de creation de link, seulement cree si la playlist est public
             'original' => true,
             ],
             [
-                //user, dans ce cas lier a lui meme
-            //'id_creator' => $user->id_utilisateur, lier a lui meme
-            'id_creator' => 2,
 
-            'playlist' => 'Liked',
-            'description' => 'Mes chansons aimers',
-            'link' => '', //fonction de creation de link, seulement cree si la playlist est public
+            'id_creator' => 1,
+            'playlist' => 'Favoris des dev',
+            'description' => 'Les tounes favorites des developeur',
+            'link' => 'Dev_fav', //fonction de creation de link, seulement cree si la playlist est public
             'original' => true,
             ],
             [
-                //user, dans ce cas lier a lui meme
-            //'id_creator' => $user->id_utilisateur, lier a lui meme
             'id_creator' => 1,
-
             'playlist' => 'Playlist public de test',
             'description' => 'Playlist public de test',
             'link' => 'TEST', //fonction de creation de link, seulement cree si la playlist est public

@@ -10,6 +10,7 @@ class RoleController extends Controller
 {
     public function role(?int $role = null): int
     {
+        // 3 est le role par defaut (utilisateur) 1 est admin et 2 est artiste
         return in_array($role, [1, 2, 3], true) ? $role : 3;
     }
 

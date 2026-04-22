@@ -10,7 +10,7 @@
         @csrf
 
         <div class="auth-field-wrap">
-            <label class="auth-label" for="email">username</label>
+            <label class="auth-label" for="email">Username</label>
             <div class="auth-input-wrap">
                 <input id="email" class="auth-input" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" placeholder="username">
             </div>
