@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
+
 #[Fillable(['name', 'country', 'email', 'status', 'role', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
@@ -36,6 +37,11 @@ class User extends Authenticatable
     {
     // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
     return $this->HasMany(Playlist::class, 'id_creator');
+    }
+    public function ecoutes(): HasMany
+    {
+    // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
+    return $this->HasMany(Ecoute::class, 'id_creator');
     }
     // quand ca cree un user ca cree aussi la playlist de like
     // plus facil a utiliser que boot !!!

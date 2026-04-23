@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Album;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Chanson extends Model
 {
@@ -34,6 +35,11 @@ class Chanson extends Model
     public function playlists(): BelongsToMany
     {
         return $this->belongsToMany(Playlist::class, 'ta_playlist_chanson', 'id_chanson', 'id_playlist');
+    }
+    public function ecoutes(): HasMany
+    {
+    // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
+    return $this->HasMany(Ecoute::class, 'id_ecoute');
     }
     protected $fillable = [
         'nom',

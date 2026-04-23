@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\EcouteController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -15,7 +16,17 @@ Route::controller(PlaylistController::class)->group(function() {
     Route::get('/link/{link}', 'playlistLink')->name('playlistLink');
     Route::get('/playlists', 'index')->name('playlistsApi');
 });
+Route::controller(EcouteController::class)->group(function() {
+    Route::get('/ecoute/artiste/{id}','ecouteParArtiste')->name('ecouteParArtisteApi');
+    Route::get('/ecoute/chanson/{id}','ecouteParChanson')->name('ecouteParChansonApi');
+    Route::get('/ecoute/user/{id}','ecouteUtilisateur')->name('ecouteUtilisateurApi');
 
+});
+Route::middleware('auth:sanctum')->controller(EcouteController::class)->group(function() {
+    Route::post('/ecoute/{id}','addEcoute')->name('addEcouteApi');
+
+
+});
 Route::middleware('auth:sanctum')->controller(PlaylistController::class)->group(function() {
     Route::get('/mesPlaylists', 'mesPlaylists')->name('mesPlaylistsApi');
     Route::post('/playlist/{id}/generateLink', 'generateLink')->name('generateLinkApi');
