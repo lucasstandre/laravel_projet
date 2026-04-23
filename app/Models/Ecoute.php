@@ -13,6 +13,8 @@ class Ecoute extends Model
     protected $primaryKey = 'id_ecoute';
     public $timestamps = false;
     protected $duree = 'duree';
+    protected $fillable = ['id_ecoute', 'duree', 'timestamp', 'id_utilisateur', 'id_chanson'];
+
     public function user(): BelongsTo
     {
     // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
@@ -23,7 +25,6 @@ class Ecoute extends Model
     // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
     return $this->belongsTo(Chanson::class, 'id_chanson'); // id de la chanson
     }
-    protected $fillable = ['id_ecoute', 'duree', 'timestamp', 'id_utilisateur', 'id_chanson'];
 
 
 

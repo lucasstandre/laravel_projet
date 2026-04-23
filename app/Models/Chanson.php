@@ -39,7 +39,7 @@ class Chanson extends Model
     public function ecoutes(): HasMany
     {
     // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
-    return $this->HasMany(Ecoute::class, 'id_ecoute');
+    return $this->hasMany(Ecoute::class, 'id_chanson');
     }
     protected $fillable = [
         'nom',

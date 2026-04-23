@@ -41,7 +41,7 @@ class User extends Authenticatable
     public function ecoutes(): HasMany
     {
     // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
-    return $this->HasMany(Ecoute::class, 'id_creator');
+    return $this->hasMany(Ecoute::class, 'id_utilisateur');
     }
     // quand ca cree un user ca cree aussi la playlist de like
     // plus facil a utiliser que boot !!!
