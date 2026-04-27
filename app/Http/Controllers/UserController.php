@@ -46,9 +46,10 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'country' => ['nullable', 'string', 'max:40'],
+            'country' => ['nullable', 'integer', 'exists:countries,id_country'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+
         ]);
 
         User::create([
@@ -56,11 +57,11 @@ class UserController extends Controller
             'country' => $validated['country'] ?? null,
             'email' => $validated['email'],
             'status' => 0,
-            'role' => 3,
+            'role' => 2,
             'password' => Hash::make($validated['password']),
         ]);
 
-        return redirect()->route('users.index')->with('success', 'Utilisateur cree.');
+        return redirect(route('dashboard', absolute: false));
     }
 
     public function edit(User $user): View
@@ -72,7 +73,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'country' => ['nullable', 'string', 'max:40'],
+            'country' => ['nullable', 'integer', 'exists:countries,id_country'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);

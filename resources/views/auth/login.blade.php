@@ -10,9 +10,9 @@
         @csrf
 
         <div class="auth-field-wrap">
-            <label class="auth-label" for="email">Username</label>
+            <label class="auth-label" for="email">Courriel</label>
             <div class="auth-input-wrap">
-                <input id="email" class="auth-input" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" placeholder="username">
+                <input id="email" class="auth-input" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="courriel" placeholder="courriel">
             </div>
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>

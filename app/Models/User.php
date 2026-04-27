@@ -37,4 +37,10 @@ class User extends Authenticatable
     // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
     return $this->HasMany(Playlist::class, 'id_creator');
     }
+
+    public function countries(): BelongsTo
+    {
+    // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
+    return $this->BelongsTo(Country::class, 'id_country');
+    }
 }

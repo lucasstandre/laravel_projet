@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('playlists')" :active="request()->routeIs('playlists')">
                         {{ __('Les playlists') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                        {{ __('Recherchez des utilisateurs') }}
+                    </x-nav-link>
                 </div>
             </div>
 

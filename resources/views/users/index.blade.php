@@ -58,7 +58,7 @@
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->country ?? '-' }}</td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->email }}</td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">
-                                @auth
+                                @if (auth()->check() && (int) auth()->user()->role === 1)
                                     <form method="POST" action="{{ route('users.status.update', $user) }}" style="display: inline-flex; gap: 0.4rem; align-items: center;">
                                         @csrf
                                         @method('PUT')
@@ -71,10 +71,10 @@
                                     </form>
                                 @else
                                     {{ (int) $user->status === 1 ? 'Prive' : 'Public' }}
-                                @endauth
+                                @endif
                             </td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">
-                                @auth
+                                @if (auth()->check() && (int) auth()->user()->role === 1)
                                     <form method="POST" action="{{ route('users.role.update', $user) }}" style="display: inline-flex; gap: 0.4rem; align-items: center;">
                                         @csrf
                                         @method('PUT')
@@ -94,19 +94,19 @@
                                     @else
                                         User
                                     @endif
-                                @endauth
+                                @endif
                             </td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->playlists_count }}</td>
                             <td style="padding: 0.75rem 1rem;">
                                 <a href="{{ route('users.show', $user) }}" style="color: rgb(196, 214, 241, 0.75); text-decoration: none; font-size: 0.8rem;">Voir</a>
-                                @auth
+                                @if (auth()->check() && (int) auth()->user()->role === 1)
                                     <a href="{{ route('users.edit', $user) }}" style="margin-left: 0.7rem; color: #ffc500; text-decoration: none; font-size: 0.8rem;">Modifier</a>
                                     <form method="POST" action="{{ route('users.destroy', $user) }}" style="display: inline; margin-left: 0.7rem;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" onclick="return confirm('Supprimer cet utilisateur ?')" style="background: transparent; border: none; padding: 0; color: #ff7a7a; font-size: 0.8rem; cursor: pointer;">Supprimer</button>
                                     </form>
-                                @endauth
+                                @endif
                             </td>
                         </tr>
                     @endforeach
