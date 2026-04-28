@@ -35,6 +35,13 @@
                 </div>
             </div>
 
+            <!-- Abonnement -->
+            <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
+                <div>
+                    @include('profile.partials.manage-subscription-form')
+                </div>
+            </div>
+
             <!-- Supprimer le compte -->
             <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
                 <div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MediaSociaux;
 
@@ -30,6 +31,11 @@ Route::middleware('auth')->group(function () {
     // Routes pour gérer le pays
     Route::post('/profile/country', [CountryController::class, 'updateUserCountry'])->name('profile.country.update');
     Route::delete('/profile/country', [CountryController::class, 'deleteUserCountry'])->name('profile.country.delete');
+
+    // Routes pour gérer l'abonnement
+    Route::post('/profile/subscription', [SubscriptionController::class, 'store'])->name('profile.subscription.store');
+    Route::put('/profile/subscription', [SubscriptionController::class, 'update'])->name('profile.subscription.update');
+    Route::delete('/profile/subscription', [SubscriptionController::class, 'destroy'])->name('profile.subscription.destroy');
 });
 
 Route::controller(PlaylistController::class)->group(function() {

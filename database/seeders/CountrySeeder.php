@@ -13,11 +13,22 @@ class CountrySeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('countries')->insert([
-        ['name_country' => 'Canada',],
-        ['name_country' => 'France',],
-        ['name_country' => 'Belgique', ],
-        ['name_country' => 'Suisse', ],
-    ]);
+        DB::table('countries')->insertOrIgnore([
+            ['id_country' => 1, 'nom' => 'France'],
+            ['id_country' => 2, 'nom' => 'Belgique'],
+            ['id_country' => 3, 'nom' => 'Suisse'],
+            ['id_country' => 4, 'nom' => 'Canada'],
+            ['id_country' => 5, 'nom' => 'Allemagne'],
+            ['id_country' => 6, 'nom' => 'Espagne'],
+            ['id_country' => 7, 'nom' => 'Italie'],
+            ['id_country' => 8, 'nom' => 'Pays-Bas'],
+            ['id_country' => 9, 'nom' => 'Portugal'],
+            ['id_country' => 10, 'nom' => 'Québec'],
+            ['id_country' => 11, 'nom' => 'États-Unis'],
+            ['id_country' => 12, 'nom' => 'Royaume-Uni'],
+            ['id_country' => 13, 'nom' => 'Suède'],
+            ['id_country' => 14, 'nom' => 'Norvège'],
+            ['id_country' => 15, 'nom' => 'Danemark'],
+        ]);
     }
 }

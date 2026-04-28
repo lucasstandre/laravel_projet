@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\MediaSocial;
 use App\Models\Country;
+use App\Models\Subscription;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,11 +21,13 @@ class ProfileController extends Controller
     {
         $mediaSocials = $request->user()->mediaSocials;
         $countries = Country::all();
+        $subscription = $request->user()->subscription ?? Subscription::create(['user_id' => $request->user()->id, 'type' => 'de base']);
 
         return view('profile.edit', [
             'user' => $request->user(),
             'mediaSocials' => $mediaSocials,
             'countries' => $countries,
+            'subscription' => $subscription,
         ]);
     }
 
