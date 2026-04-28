@@ -5,10 +5,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ChansonController;
 use App\Http\Controllers\CountryController;
-use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MediaSociaux;
+use App\Http\Controllers\StatisticController;
+use App\Http\Controllers\SubscriptionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -104,10 +106,17 @@ Route::middleware(['auth', 'admin'])->controller(RoleController::class)->group(f
     Route::put('/users/{user}/role', 'update')->name('users.role.update');
 });
 
+Route::middleware('auth')->prefix('statistics')->controller(StatisticController::class)->group(function () {
+    Route::get('/user/{id?}', 'userStats')->name('statisticsUserApi');
+    Route::get('/artist/{id?}', 'artistStats')->name('statisticsArtistApi');
+});
 
+Route::middleware('auth')->controller(StatisticController::class)->group(function () {
+    Route::get('/statistique/user/{id?}', 'showUser')->name('statistique.user');
+    Route::get('/statistique/artist/{id?}', 'showArtist')->name('statistique.artist');
+});
 // Routes pour les médias sociaux
 use App\Http\Controllers\MediaSociaux as MediaSociauxController;
 Route::resource('mediasociaux', MediaSociauxController::class)->except(['show']);
-
 
 require __DIR__.'/auth.php';
