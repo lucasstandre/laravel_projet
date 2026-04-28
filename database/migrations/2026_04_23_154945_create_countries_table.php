@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('countries', function (Blueprint $table) {
         $table->bigIncrements('id_country');
         $table->string('name_country');
-
+        $table->string('code')->nullable(); // obliger pour la map
     });
 }
 

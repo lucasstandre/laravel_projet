@@ -67,29 +67,33 @@ class StatisticController extends Controller
     }
 
     /**
-     * Display the user statistics view.
+     * montre le show pour le user
      */
     public function showUser(?int $id = null)
     {
-        // Autorisation : Seulement l'admin peut voir les stats d'un autre utilisateur
-        // Note : Ajustez "is_admin" si votre gestion de rôle est différente (ex: ->role === 'admin')
-        if ($id && $id != Auth::id() && !Auth::user()->is_admin) {
-            abort(403, 'Accès non autorisé.');
+        $user = Auth::user();
+        if ($id // si jai un id
+        && $id != $user->id // et que lid nest pas le id du user
+        && $user->role != 3) { // et que lid nest pas admin
+            abort(403, 'Accès non autorisé.'); // marche pas
         }
 
         $statsResponse = $this->userStats($id);
-        if ($statsResponse->status() !== 200) return abort(401);
+
+        if ($statsResponse->status() !== 200) {
+            return abort(401);
+        }
 
         return view('statistic.user', $statsResponse->getData(true));
     }
 
     /**
-     * Display the artist statistics view.
+     * montre les stats en show de lartist
      */
     public function showArtist(?int $id = null)
     {
-        // Autorisation : Seulement l'admin peut voir les stats d'un autre artiste
-        if ($id && $id != Auth::id() && !Auth::user()->is_admin) {
+        $user = Auth::user(); // meme chose que user
+        if ($id && $id != $user->id && $user->role != 3) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -104,42 +108,54 @@ class StatisticController extends Controller
      */
     public function userStats(?int $id = null): JsonResponse
     {
-        $userId = $id ?? Auth::id();
+        // si ya pas de id specifier auth toi
+        if ($id) {
+            $userId = $id;
+        } else {
+            $userId = Auth::id();
+        }
 
-        if (!$userId) return response()->json(['ERREUR' => 'Unauthorized'], 401);
+        if (!$userId) {
+            return response()->json(['ERREUR' => 'Unauthorized'], 401);
+        }
 
-        $user = DB::table('users')->find($userId);
-        $userName = $user->name ?? 'Unknown';
-        $isVerified = !is_null($user->email_verified_at);
+        $user = DB::table('users')->where('id', $userId)->first();
+
+        $userName = $user->name;
+        // par default yer pas verifier pi si ya un email verified (on a pas encore un champ verified dans user)
+        $isVerified = false;
+        if ($user->email_verified_at != null) {
+            $isVerified = true;
+        }
+
         $accountAge = round(now()->diffInDays(\Carbon\Carbon::parse($user->created_at)) / 365.25, 1);
-        $userStatus = $user->status == 0 ? 'Public' : 'Private';
-
-        // pogne le nombre de playlist du user
+        // par default public mais private si on specifie le statu a 0
+        $userStatus = 'Public';
+        if ($user->status != 0) {
+            $userStatus = 'Private';
+        }
+        //compte les playlist avec count
         $playlistCount = DB::table('playlists')->where('id_creator', $userId)->count();
-        // pogne le nombre de chanson dans les playlist
+        //grace a la table dasso on peu voire le TA de toute les playlist des user
         $librarySize = DB::table('ta_playlist_chanson')
             ->join('playlists', 'ta_playlist_chanson.id_playlist', '=', 'playlists.id_playlist')
             ->where('playlists.id_creator', $userId)
             ->distinct('ta_playlist_chanson.id_chanson')
             ->count('ta_playlist_chanson.id_chanson');
-
-        // les dates
-        $thirtyDaysAgo = date('Y-m-d H:i:s', strtotime('-30 days'));
-        $startOfYear = date('Y-01-01 00:00:00');
-
+        // jai changer pour duree pcq timestamp cest comme une variable par default de laravel
         $listeningTime30Days = (int) DB::table('ecoutes')
             ->where('id_utilisateur', $userId)
-            ->where('timestamp', '>=', $thirtyDaysAgo)
+            ->where('timestamp', '>=', date('Y-m-d H:i:s', strtotime('-30 days')))
             ->sum('duree');
 
         $listeningTimeYear = (int) DB::table('ecoutes')
             ->where('id_utilisateur', $userId)
-            ->where('timestamp', '>=', $startOfYear)
+            ->where('timestamp', '>=', date('Y-01-01 00:00:00'))
             ->sum('duree');
 
-        // les top des genres
         $totalListens = DB::table('ecoutes')->where('id_utilisateur', $userId)->count();
-        $genres = DB::table('ecoutes')
+
+        $genresData = DB::table('ecoutes')
             ->join('chansons', 'ecoutes.id_chanson', '=', 'chansons.id_chanson')
             ->join('genres', 'chansons.id_genre', '=', 'genres.id_genre')
             ->select('genres.genre', DB::raw('count(*) as listen_count'))
@@ -148,12 +164,19 @@ class StatisticController extends Controller
             ->orderByDesc('listen_count')
             ->get();
 
-        foreach ($genres as $genre) {
-            $genre->percentage = $totalListens > 0 ? round(($genre->listen_count / $totalListens) * 100, 2) : 0;
+        $genres = [];
+        foreach ($genresData as $row) {
+            $percentage = 0;
+            if ($totalListens > 0) {
+                $percentage = round(($row->listen_count / $totalListens) * 100, 2);
+            }
+            $genres[] = [
+                'genre' => $row->genre,
+                'percentage' => $percentage
+            ];
         }
-
-        // top artist limit de 5
-        $topArtists = DB::table('ecoutes')
+        //pogne les 5 top artiste, count as listen_count apres pogne le top 5
+        $topArtistsData = DB::table('ecoutes')
             ->join('chansons', 'ecoutes.id_chanson', '=', 'chansons.id_chanson')
             ->join('users', 'chansons.id_artiste', '=', 'users.id')
             ->select('users.name as artist_name', DB::raw('count(*) as listen_count'))
@@ -163,9 +186,23 @@ class StatisticController extends Controller
             ->limit(5)
             ->get();
 
-        return response()->json(compact(
-            'userName', 'isVerified', 'accountAge', 'userStatus', 'playlistCount', 'librarySize', 'listeningTime30Days', 'listeningTimeYear', 'genres', 'topArtists'
-        ), 200);
+        $topArtists = [];
+        foreach ($topArtistsData as $row) {
+            $topArtists[] = ['artist_name' => $row->artist_name];
+        }
+
+        return response()->json([
+            'userName' => $userName,
+            'isVerified' => $isVerified,
+            'accountAge' => $accountAge,
+            'userStatus' => $userStatus,
+            'playlistCount' => $playlistCount,
+            'librarySize' => $librarySize,
+            'listeningTime30Days' => $listeningTime30Days,
+            'listeningTimeYear' => $listeningTimeYear,
+            'genres' => $genres,
+            'topArtists' => $topArtists
+        ], 200);
     }
 
     /**
@@ -173,75 +210,95 @@ class StatisticController extends Controller
      */
     public function artistStats(?int $id = null): JsonResponse
     {
-        $artistId = $id ?? Auth::id();
-        if (!$artistId) return response()->json(['ERREUR' => 'Unauthorized'], 401);
+        $artistId = $id ?: Auth::id();
 
-        $artist = DB::table('users')->find($artistId);
-        $artistName = $artist->name ?? 'Unknown';
-        $isVerifiedArtist = !is_null($artist->email_verified_at);
-        $topCountry = $artist->country ?? 'Unknown';
+        $artist = DB::table('users')->where('id', $artistId)->first();
+        $artistName = $artist->name;
+        $isVerifiedArtist = $artist->email_verified_at != null;
 
-        // Calcul du Global Rank
-        $allArtistsStreams = DB::table('ecoutes')
-            ->join('chansons', 'ecoutes.id_chanson', '=', 'chansons.id_chanson')
-            ->select('chansons.id_artiste', DB::raw('count(*) as streams'))
-            ->groupBy('chansons.id_artiste')
-            ->orderByDesc('streams')
-            ->get();
-        
-        $globalRank = '-';
-        foreach ($allArtistsStreams as $index => $row) {
-            if ($row->id_artiste == $artistId) {
-                $globalRank = '#' . ($index + 1);
-                break;
-            }
-        }
-
-        // Fake data pour Follower Growth vu l'absence de table "followers"
-        $followerGrowth = 5200;
-
+        // total des stream
         $totalStreams = DB::table('ecoutes')
             ->join('chansons', 'ecoutes.id_chanson', '=', 'chansons.id_chanson')
             ->where('chansons.id_artiste', $artistId)
             ->count();
 
-        $thirtyDaysAgo = date('Y-m-d H:i:s', strtotime('-30 days'));
-
+        // 30 jour
         $activeListeners = DB::table('ecoutes')
             ->join('chansons', 'ecoutes.id_chanson', '=', 'chansons.id_chanson')
             ->where('chansons.id_artiste', $artistId)
-            ->where('ecoutes.timestamp', '>=', $thirtyDaysAgo)
+            ->where('ecoutes.timestamp', '>=', now()->subDays(30))
             ->distinct('ecoutes.id_utilisateur')
             ->count('ecoutes.id_utilisateur');
 
-        $monthlyListenersFormatted = $activeListeners;
-        if ($activeListeners >= 1000000) {
-            $monthlyListenersFormatted = round($activeListeners / 1000000, 1) . 'M';
-        } elseif ($activeListeners >= 1000) {
-            $monthlyListenersFormatted = round($activeListeners / 1000, 1) . 'K';
-        }
-
-        $playlistAdds = DB::table('ta_playlist_chanson')
-            ->join('chansons', 'ta_playlist_chanson.id_chanson', '=', 'chansons.id_chanson')
+        // pogne les pays
+        $mapData  = DB::table('ecoutes')
+            ->join('chansons', 'ecoutes.id_chanson', '=', 'chansons.id_chanson')
+            ->join('users', 'ecoutes.id_utilisateur', '=', 'users.id')
+            ->join('countries', 'users.id_country', '=', 'countries.id_country')
+            ->select('countries.name_country', DB::raw('count(*) as count')) // force un count
             ->where('chansons.id_artiste', $artistId)
-            ->count();
+            ->groupBy('countries.id_country', 'countries.name_country')
+            ->orderByDesc('count')
+            ->get();
+
+        // le premier pays de la list devient le topcountry
+        $topCountry = $mapData ->first()->name_country ?? 'None';
+
+
 
         $trends = DB::table('ecoutes')
             ->join('chansons', 'ecoutes.id_chanson', '=', 'chansons.id_chanson')
             ->select(DB::raw('DATE(timestamp) as date'), DB::raw('count(*) as streams'))
             ->where('chansons.id_artiste', $artistId)
-            ->where('ecoutes.timestamp', '>=', $thirtyDaysAgo)
             ->groupBy('date')
             ->orderBy('date', 'ASC')
             ->get();
 
-        // Format trend output manually (no pluck)
-        $streamTrends = ['labels' => [], 'data' => []];
-        foreach ($trends as $trend) {
-            $streamTrends['labels'][] = $trend->date;
-            $streamTrends['data'][] = $trend->streams;
-        }
 
-        return response()->json(compact('artistName', 'isVerifiedArtist', 'topCountry', 'globalRank', 'monthlyListenersFormatted', 'followerGrowth', 'totalStreams', 'activeListeners', 'playlistAdds', 'streamTrends'), 200);
+        $playlistAdds = DB::table('ta_playlist_chanson')
+            ->join('chansons', 'ta_playlist_chanson.id_chanson', '=', 'chansons.id_chanson')
+            ->where('chansons.id_artiste', $artistId)
+            ->count();
+        // pogne le rank de tous
+            $allArtists = DB::table('ecoutes')
+                ->join('chansons', 'ecoutes.id_chanson', '=', 'chansons.id_chanson')
+                ->select('chansons.id_artiste', DB::raw('count(*) as total'))
+                ->groupBy('chansons.id_artiste')
+                ->orderByDesc('total')
+                ->get();
+
+            // variable de base
+            $rankPosition = 1;
+            $found = false;
+
+            // boucle jusquatemp de trouver lartiste
+            foreach ($allArtists as $row) {
+                if ($row->id_artiste == $artistId) {
+                    $found = true;
+                    break;
+                }
+
+                $rankPosition = $rankPosition ++;
+            }
+
+            // donc si ta une position on met # devant sinon NR pour not ranked
+            if ($found) {
+                $globalRank = '#' . $rankPosition;
+            } else {
+                $globalRank = 'NR';
+            }
+        return response()->json([
+            'artistName' => $artistName,
+            'isVerifiedArtist' => $isVerifiedArtist,
+            'topCountry' => $topCountry,
+            'totalStreams' => $totalStreams,
+            'activeListeners' => $activeListeners,
+            'monthlyListenersFormatted' => number_format($activeListeners),
+            'globalRank' => $globalRank,
+            'followerGrowth' => 0, // pour linstant hard coded pcq ya pas de table follower dans user
+            'playlistAdds' => $playlistAdds,
+            'trends' => $trends,
+            'mapData' => $mapData
+        ], 200);
     }
 }

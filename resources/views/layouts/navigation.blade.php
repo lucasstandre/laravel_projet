@@ -36,9 +36,15 @@
                             <x-dropdown-link :href="route('profile.edit')" class="text-gray-300 hover:bg-white/5">
                                 {{ __('Profil') }}
                             </x-dropdown-link>
+                            @if ((int) Auth::user()->role === 2) {{-- si cest un artist fait la route dartiste si cest un user fait la route de user --}}
+                            <x-dropdown-link :href="route('statistique.artist', ['id' => Auth::id()])" class="text-yellow-500 hover:bg-white/5 font-bold border-b border-white/5">
+                                {{ __('Mes Stats') }}
+                            </x-dropdown-link>
+                            @else
                             <x-dropdown-link :href="route('statistique.user', ['id' => Auth::id()])" class="text-yellow-500 hover:bg-white/5 font-bold border-b border-white/5">
                                 {{ __('Mes Stats') }}
                             </x-dropdown-link>
+                            @endif
 
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -70,7 +76,11 @@
         </div>
         <div class="pt-4 pb-1 border-t border-white/5">
             <div class="px-4 py-2 border-b border-white/5 mb-2">
+                @if ((int) Auth::user()->role === 2)
+                <x-responsive-nav-link :href="route('statistique.artist', ['id' => Auth::id()])" class="text-yellow-500 font-black italic">MES STATISTIQUES</x-responsive-nav-link>
+                @else
                 <x-responsive-nav-link :href="route('statistique.user', ['id' => Auth::id()])" class="text-yellow-500 font-black italic">MES STATISTIQUES</x-responsive-nav-link>
+                @endif
             </div>
             <div class="px-4">
                 <div class="font-bold text-base text-gray-200">{{ Auth::user()->name }}</div>

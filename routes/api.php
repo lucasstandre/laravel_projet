@@ -38,18 +38,11 @@ Route::middleware('auth:sanctum')->controller(PlaylistController::class)->group(
 });
 
 Route::middleware('auth:sanctum')->prefix('statistics')->controller(StatisticController::class)->group(function () {
-    // user
-    Route::get('/user/playlists', 'userPlaylistCount')->name('api.statistics.user.playlists');
-    Route::get('/user/library', 'userLibrarySize')->name('api.statistics.user.library');
-    Route::get('/user/time', 'userListeningTime')->name('api.statistics.user.time');
-    Route::get('/user/genres', 'userTopGenres')->name('api.statistics.user.genres');
-    Route::get('/user/artists', 'userTopArtists')->name('api.statistics.user.artists');
+    // users toute les stats peut passer juste par le user logger dout vien le ?
+    Route::get('/user/{id?}', 'userStats')->name('api.statistics.user');
 
-    // artist
-    Route::get('/artist/streams', 'artistTotalStreams')->name('api.statistics.artist.streams');
-    Route::get('/artist/listeners', 'artistActiveListeners')->name('api.statistics.artist.listeners');
-    Route::get('/artist/playlist-adds', 'artistPlaylistAdds')->name('api.statistics.artist.playlist-adds');
-    Route::get('/artist/trends', 'artistStreamTrends')->name('api.statistics.artist.trends');
+    // artiste toute les stats
+    Route::get('/artist/{id?}', 'artistStats')->name('api.statistics.artist');
 });
 
 Route::post('/token', [RegisteredUserController::class, 'show'])->name('token');

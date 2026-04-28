@@ -79,7 +79,7 @@
     <script>
         const ctx = document.getElementById('genreChart').getContext('2d');
         new Chart(ctx, {
-            type: 'doughnut', // 'doughnut' pour le look moderne avec trou au milieu
+            type: 'doughnut',
             data: {
                 labels: {!! json_encode(collect($genres)->pluck('genre')) !!},
                 datasets: [{
@@ -90,7 +90,7 @@
                 }]
             },
             options: {
-                cutout: '50%', // Taille du trou au milieu
+                cutout: '50%',
                 plugins: { legend: { display: false } }
             }
         });
