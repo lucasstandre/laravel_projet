@@ -13,6 +13,7 @@ use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Country;
 
 class RegisteredUserController extends Controller
 {
@@ -21,7 +22,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $countries = Country::orderBy('name_country')->get(); // Récupérer les pays triés par nom
+        return view('auth.register', compact('countries')); // Passer les pays à la vue
     }
 
     /**
@@ -33,17 +35,17 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'country' => ['required', 'string', 'max:40'],
+            'country' => ['required', 'integer', 'exists:countries,id_country'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
-            'country' => $request->country,
+            'country' => (int) $request->country,
             'email' => $request->email,
             'status' => 0,
-            'role' => 3,
+            'role' => 2,
             'password' => Hash::make($request->password),
         ]);
 
@@ -51,7 +53,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('home', absolute: false));
+        return redirect(route('dashboard', absolute: false));
     }
     public function show(Request $request)
     {

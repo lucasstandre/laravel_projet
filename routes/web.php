@@ -7,6 +7,7 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChansonController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MediaSociaux;
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,11 +37,26 @@ Route::middleware('auth')->controller(PlaylistController::class)->group(function
     Route::get('/mesPlaylists', 'mesPlaylists')->name('mesPlaylists');
 });
 
+// Route pour rechercher un utilisateur dans le menu navigation
+Route::controller(UserController::class)->group(function() {
+    Route::get('/users', 'index')->name('users');
+    Route::get('/users/{user}', 'show')->name('users');
+});
+
+
+// Route pour quand on recherche un utilisateur
+Route::controller(UserController::class)->group(function() {
+    Route::get('/users', 'index')->name('users.show');
+    Route::get('/users/{user}', 'show')->name('users');
+});
+
+// Route pour la gestion des utilisateurs (CRUD)
 Route::controller(UserController::class)->group(function() {
     Route::get('/users', 'index')->name('users.index');
     Route::get('/users/{user}', 'show')->name('users.show');
 });
 
+<<<<<<< HEAD
 Route::controller(ChansonController::class)->group(function(){
     Route::get('/chansons', 'index')->name('chansons');
 
@@ -62,6 +78,10 @@ Route::controller(AlbumController::class)->group(function(){
 });
 
 Route::middleware('auth')->controller(UserController::class)->group(function() {
+=======
+// Seul role admin peut accéder à ces routes
+Route::middleware(['auth', 'admin'])->controller(UserController::class)->group(function() {
+>>>>>>> feature/users-page
     Route::get('/users/create', 'create')->name('users.create');
     Route::post('/users', 'store')->name('users.store');
     Route::get('/users/{user}/edit', 'edit')->name('users.edit');
@@ -69,12 +89,27 @@ Route::middleware('auth')->controller(UserController::class)->group(function() {
     Route::delete('/users/{user}', 'destroy')->name('users.destroy');
 });
 
-Route::middleware('auth')->controller(StatusController::class)->group(function() {
+// seul role admin peut accéder à ces routes pour changer le status et le role d'un utilisateur
+Route::middleware(['auth', 'admin'])->controller(StatusController::class)->group(function() {
     Route::put('/users/{user}/status', 'update')->name('users.status.update');
 });
 
-Route::middleware('auth')->controller(RoleController::class)->group(function() {
+// seul role admin peut accéder à ces routes pour changer le role d'un utilisateur
+Route::middleware(['auth', 'admin'])->controller(RoleController::class)->group(function() {
     Route::put('/users/{user}/role', 'update')->name('users.role.update');
 });
+
+
+// Routes pour les médias sociaux
+Route::controller(MediaSociaux::class)->group(function() {
+    Route::get('/media-sociaux', 'index')->name('media-sociaux.index');
+    Route::get('/media-sociaux/create', 'create')->name('media-sociaux.create');
+    Route::post('/media-sociaux', 'store')->name('media-sociaux.store');
+    Route::get('/media-sociaux/{id}', 'show')->name('media-sociaux.show');
+    Route::get('/media-sociaux/{id}/edit', 'edit')->name('media-sociaux.edit');
+    Route::put('/media-sociaux/{id}', 'update')->name('media-sociaux.update');
+    Route::delete('/media-sociaux/{id}', 'destroy')->name('media-sociaux.destroy');
+});
+
 
 require __DIR__.'/auth.php';

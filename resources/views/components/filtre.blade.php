@@ -7,6 +7,7 @@
 
         {{-- option de base pour selectionner tout les ex : type, genre etc --}}
         <option value="">Tous les {{ $label }}s</option>
+        {{-- Faire un if else pour s  --}}
         {{-- for loop pour tout les options qui se displays --}}
         @foreach($options as $value => $display)
             <option value="{{ $value }}"

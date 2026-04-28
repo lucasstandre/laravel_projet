@@ -34,10 +34,10 @@ class DatabaseSeeder extends Seeder
         // Vous pouvez ajouter d’autres "seeders" en les séparant par des virgules.
             GenreSeeder::class,
             PlaylistSeeder::class,
-             AlbumSeeder::class,
+            AlbumSeeder::class,
             ChansonSeeder::class,
-            PlaylistChansonSeeder::class
-
+            PlaylistChansonSeeder::class,
+            CountrySeeder::class
         ]);
     }
 }

@@ -56,5 +56,14 @@ class User extends Authenticatable
                 'original' => true,
             ]);
         });
+
     }
+    public function countries(): BelongsTo
+        {
+        // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
+        return $this->BelongsTo(Country::class, 'id_country');
+        }
+
+
 }
+
