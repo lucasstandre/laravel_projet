@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Modifier un utilisateur')
+@section('title', 'Modifier une chansons')
 
 @section('content')
 <div style="background: linear-gradient(105deg, #01060f 0%, #03152d 52%, #04142b 100%); min-height: 100vh; padding: 2rem; color: #dbe7ff;">
@@ -21,12 +21,18 @@
             @csrf
             @method('PUT')
 
+            <a>Nom de la chanson:</a>
             <input type="text" name="nom" placeholder="Nom" value="{{ $chanson->nom }}" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
+            <a>Durée de la chanson:</a>
             <input type="text" name="duree" placeholder="Duree" value="{{ $chanson->duree }}" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
+            <a>Description de la chanson:</a>
             <input type="text" name="description" placeholder="description" value="{{ $chanson->description }}" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
+            <a>Date de sortie de la chanson:</a>
             <input type="date" name="date_sortie" placeholder="date de sortie" value="{{ $chanson->date_sortie }}" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
+            <a>Fichier image de la chanson :</a>
             <input type="text" name="fichier" placeholder="fichier" value="{{ $chanson->fichier }}"" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
 
+            <a>Album de la chanson</a>
             <select name="id_album" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
                 <option value="">-- Choisir un album --</option>
                 @foreach ($albums as $album)
@@ -34,6 +40,7 @@
                 @endforeach
             </select>
 
+            <a>Genre de la chanson</a>
             <select name="id_genre" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
                 <option value="">-- Choisir un genre --</option>
                 @foreach ($genres as $genre)
@@ -41,6 +48,7 @@
                 @endforeach
             </select>
 
+            <a>Nom de l'artiste:</a>
             <select name="id_artiste" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
                 <option value="">-- Choisir un artiste --</option>
                 @foreach ($artistes as $artiste)

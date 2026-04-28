@@ -23,19 +23,22 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
             'password' => Hash::make('password'), // forcer a faire un password password pcq ca marchait pu
             'role' => 1,
+            'country' => 'Canada',
         ]);
         User::factory()->create([
             'name' => 'Test User 2',
             'email' => 'test2@example.com',
             'password' => Hash::make('password'),
             'role' => 1,
+            'country' => 'France',
         ]);
         $this->call([
         // Vous pouvez ajouter d’autres "seeders" en les séparant par des virgules.
             GenreSeeder::class,
             PlaylistSeeder::class,
-             AlbumSeeder::class,
-            ChansonSeeder::class
+            AlbumSeeder::class,
+            ChansonSeeder::class,
+            PaysSeeder::class,
         ]);
     }
 }
