@@ -70,14 +70,12 @@
                         <tr style="border-bottom: 1px solid rgba(126, 162, 211, 0.1); transition: background 150ms ease;">
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->name }}</td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">
-                                @if ($user->country && is_object($user->country))
-                                    {{ $user->country->name_country }}
-                                @elseif ($user->id_country)
-                                    @php $country = \App\Models\Country::find($user->id_country); @endphp
-                                    {{ $country ? $country->name_country : '-' }}
-                                @else
-                                    -
-                                @endif
+                                @php
+                                    $countryName = $user->country_name ?? '-';
+                                    // DEBUG
+                                    error_log("User: {$user->name}, id_country: {$user->id_country}, country_name: {$countryName}");
+                                @endphp
+                                {{ $countryName }}
                             </td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->email }}</td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">

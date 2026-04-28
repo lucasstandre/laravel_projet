@@ -49,6 +49,23 @@ Route::controller(UserController::class)->group(function() {
     Route::get('/users/{user}', 'show')->name('users.show');
 });
 
+// Route de debug
+Route::get('/debug-users', function() {
+    $users = \App\Models\User::with('country')->limit(5)->get();
+    $debug = [];
+    foreach($users as $user) {
+        $debug[] = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'id_country' => $user->id_country,
+            'country_attr' => $user->getAttribute('country'),
+            'country_relation' => $user->country ? $user->country->name_country : null,
+            'all_attributes' => $user->getAttributes(),
+        ];
+    }
+    return response()->json($debug);
+});
+
 // Seul role admin peut accéder à ces routes
 Route::middleware(['auth', 'admin'])->controller(UserController::class)->group(function() {
     Route::get('/users/create', 'create')->name('users.create');
