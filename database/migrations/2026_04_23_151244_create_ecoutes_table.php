@@ -15,10 +15,13 @@ return new class extends Migration
         $table->engine = 'InnoDB'; // Pour pouvoir utiliser les clés étrangères et les transactions
         $table->bigIncrements('id_ecoute'); // Clé primaire automatiquement créée avec "bigIncrements()".
         // "usigned()" nécessaire pour éventuellement pouvoir définir une clé étrangère sur cette colonne.
-        $table->string('duree');
-        $table->string('timestamp');
-        $table->string('id_utilisateur');
-        $table->string('id_chanson');
+        $table->integer('duree');
+        $table->timestamp('timestamp')->useCurrent();
+        $table->unsignedBigInteger('id_utilisateur');
+        $table->unsignedInteger('id_chanson');
+
+        $table->foreign('id_utilisateur')->references('id')->on('users')->onDelete('cascade');
+        $table->foreign('id_chanson')->references('id_chanson')->on('chansons')->onDelete('cascade');
 
         });
     }
