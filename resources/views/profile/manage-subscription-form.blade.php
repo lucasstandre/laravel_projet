@@ -17,13 +17,13 @@
                 <div style="padding: 1rem; background: rgba(28, 50, 84, 0.3); border-radius: 6px; border-left: 3px solid #ffc500; display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <p style="margin: 0; font-size: 1rem; color: #dbe7ff; font-weight: 600;">
-                            {{ ucfirst($subscription->type) }}
-                            @if ($subscription->type === 'premium')
+                            {{ $subscription->subscriptionType->label ?? ucfirst($subscription->type) }}
+                            @if ($subscription->subscription_type_id === 2)
                                 <span style="margin-left: 0.5rem; color: #ffc500; font-weight: 700;">⭐</span>
                             @endif
                         </p>
                     </div>
-                    @if ($subscription->type === 'premium')
+                    @if ($subscription->subscription_type_id === 2)
                         <form action="{{ route('profile.subscription.destroy') }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
@@ -46,13 +46,13 @@
             <!-- Plans disponibles -->
             <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); margin-bottom: 1.5rem;">
                 <!-- Plan de base -->
-                <div style="padding: 1.5rem; background: rgba(28, 50, 84, 0.3); border: 2px solid rgba(126, 162, 211, 0.3); border-radius: 8px; {{ $subscription && $subscription->type === 'de base' ? 'border-color: #ffc500; background: rgba(255, 197, 0, 0.1);' : '' }}">
+                <div style="padding: 1.5rem; background: rgba(28, 50, 84, 0.3); border: 2px solid rgba(126, 162, 211, 0.3); border-radius: 8px; {{ $subscription && $subscription->subscription_type_id === 1 ? 'border-color: #ffc500; background: rgba(255, 197, 0, 0.1);' : '' }}">
                     <h4 style="margin: 0 0 0.5rem 0; color: #dbe7ff; font-weight: 700;">De Base</h4>
                     <p style="margin: 0; color: rgb(196, 214, 241, 0.7); font-size: 0.9rem;">Accès gratuit et illimité</p>
-                    @if (!$subscription || $subscription->type !== 'de base')
+                    @if (!$subscription || $subscription->subscription_type_id !== 1)
                         <form action="{{ route('profile.subscription.update') }}" method="POST" style="margin-top: 1rem;">
                             @csrf
-                            <input type="hidden" name="type" value="de base">
+                            <input type="hidden" name="subscription_type_id" value="1">
                             <button type="submit" style="width: 100%; padding: 0.75rem; border: none; border-radius: 6px; background: #dbe7ff; color: #0b1528; font-weight: 600; cursor: pointer;">
                                 Choisir
                             </button>
@@ -65,13 +65,13 @@
                 </div>
 
                 <!-- Plan premium -->
-                <div style="padding: 1.5rem; background: rgba(28, 50, 84, 0.3); border: 2px solid rgba(255, 197, 0, 0.5); border-radius: 8px; {{ $subscription && $subscription->type === 'premium' ? 'border-color: #ffc500; background: rgba(255, 197, 0, 0.1);' : '' }}">
+                <div style="padding: 1.5rem; background: rgba(28, 50, 84, 0.3); border: 2px solid rgba(255, 197, 0, 0.5); border-radius: 8px; {{ $subscription && $subscription->subscription_type_id === 2 ? 'border-color: #ffc500; background: rgba(255, 197, 0, 0.1);' : '' }}">
                     <h4 style="margin: 0 0 0.5rem 0; color: #ffc500; font-weight: 700;">⭐ Premium</h4>
                     <p style="margin: 0; color: rgb(196, 214, 241, 0.7); font-size: 0.9rem;">Accès premium avec avantages exclusifs</p>
-                    @if (!$subscription || $subscription->type !== 'premium')
+                    @if (!$subscription || $subscription->subscription_type_id !== 2)
                         <form action="{{ route('profile.subscription.update') }}" method="POST" style="margin-top: 1rem;">
                             @csrf
-                            <input type="hidden" name="type" value="premium">
+                            <input type="hidden" name="subscription_type_id" value="2">
                             <button type="submit" style="width: 100%; padding: 0.75rem; border: none; border-radius: 6px; background: #ffc500; color: #0b1528; font-weight: 600; cursor: pointer;">
                                 Passer à Premium
                             </button>

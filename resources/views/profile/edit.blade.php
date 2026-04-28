@@ -9,43 +9,43 @@
         <div style="max-width: 900px; margin: 0 auto;">
             <!-- Informations de profil -->
             <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
-                <div>
-                    @include('profile.partials.update-profile-information-form')
+                    <div>
+                    @include('profile.update-profile-information-form')
                 </div>
             </div>
 
             <!-- Mot de passe -->
             <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
-                <div>
-                    @include('profile.partials.update-password-form')
+                    <div>
+                    @include('profile.update-password-form')
                 </div>
             </div>
 
             <!-- Médias sociaux -->
             <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
-                <div>
-                    @include('profile.partials.manage-media-socials-form')
+                    <div>
+                    @include('profile.manage-media-socials-form')
                 </div>
             </div>
 
             <!-- Pays -->
             <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
-                <div>
-                    @include('profile.partials.manage-country-form')
+                    <div>
+                    @include('profile.manage-country-form')
                 </div>
             </div>
 
             <!-- Abonnement -->
             <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
-                <div>
-                    @include('profile.partials.manage-subscription-form')
+                    <div>
+                    @include('profile.manage-subscription-form')
                 </div>
             </div>
 
             <!-- Supprimer le compte -->
             <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
-                <div>
-                    @include('profile.partials.delete-user-form')
+                    <div>
+                    @include('profile.delete-user-form')
                 </div>
             </div>
         </div>

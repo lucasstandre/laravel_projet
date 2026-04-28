@@ -66,6 +66,25 @@ Route::get('/debug-users', function() {
     return response()->json($debug);
 });
 
+// Test subscription structure
+Route::get('/test-subscription', function() {
+    $user = \App\Models\User::first();
+    if (!$user) {
+        return response()->json(['error' => 'No users found']);
+    }
+
+    $subscription = $user->subscription;
+    $tables = \Illuminate\Support\Facades\DB::select("DESCRIBE subscriptions");
+
+    return response()->json([
+        'user_id' => $user->id,
+        'subscription' => $subscription ? $subscription->getAttributes() : null,
+        'table_structure' => array_map(function($col) {
+            return $col->Field . ' (' . $col->Type . ')';
+        }, $tables),
+    ]);
+});
+
 // Seul role admin peut accéder à ces routes
 Route::middleware(['auth', 'admin'])->controller(UserController::class)->group(function() {
     Route::get('/users/create', 'create')->name('users.create');

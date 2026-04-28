@@ -45,11 +45,12 @@ class User extends Authenticatable
     // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
     return $this->hasMany(Ecoute::class, 'id_utilisateur');
     }
-    // quand ca cree un user ca cree aussi la playlist de like
+    // quand ca cree un user ca cree aussi la playlist de like et un abonnement par défaut
     // plus facil a utiliser que boot !!!
     protected static function booted(): void
     {
         static::created(function (User $user) {
+            // Créer la playlist "Liked"
             Playlist::create([
                 'id_creator' => $user->id,
                 'playlist' => 'Liked',
@@ -57,8 +58,14 @@ class User extends Authenticatable
                 'link' => '',
                 'original' => true,
             ]);
-        });
 
+            // Créer un abonnement par défaut (de base)
+            Subscription::create([
+                'user_id' => $user->id,
+                'subscription_type_id' => 1,
+                'type' => 'de base',
+            ]);
+        });
     }
     public function country(): BelongsTo
     {

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('nom'); // nom du réseau social (Twitter, Instagram, etc.)
             $table->string('url'); // URL du profil
-            $table->string('icone')->nullable(); // icône ou emoji
             $table->boolean('actif')->default(true);
             $table->timestamps();
         });

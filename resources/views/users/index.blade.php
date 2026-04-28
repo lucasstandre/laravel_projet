@@ -1,8 +1,4 @@
-@extends('layouts.main')
-
-@section('title', 'Utilisateurs - Sonora')
-
-@section('content')
+<x-app-layout>
 <div style="background: linear-gradient(105deg, #01060f 0%, #03152d 52%, #04142b 100%); color: #dbe7ff; font-family: 'Manrope', sans-serif; min-height: 100vh; padding: 2rem;">
     <div style="max-width: 1000px; margin: 0 auto;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
@@ -156,3 +152,4 @@
         @endif
     </div>
 </div>
+</x-app-layout>

@@ -31,10 +31,9 @@ class UserController extends Controller
             $query->where('id_country', $pays);
         }
 
-        // Si search est vide, on ne fait pas la requete et on retourne une collection vide pour éviter de charger tous les utilisateurs
-        $users = ($search || $pays)
-            ? $query->orderBy('name')->paginate(10)->withQueryString()
-            : collect();
+        // Toujours paginer les utilisateurs pour afficher la navigation (pagination)
+        // Si vous voulez limiter la charge, ajoutez des filtres ou une condition ici.
+        $users = $query->orderBy('name')->paginate(10)->withQueryString();
 
         // Get all countries for the filter
         $countries = Country::orderBy('name_country')->get();
