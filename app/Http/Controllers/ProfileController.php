@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\MediaSocial;
+use App\Models\Country;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,8 +18,13 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $mediaSocials = $request->user()->mediaSocials;
+        $countries = Country::all();
+
         return view('profile.edit', [
             'user' => $request->user(),
+            'mediaSocials' => $mediaSocials,
+            'countries' => $countries,
         ]);
     }
 
@@ -56,5 +63,57 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    /**
+     * Store a new media social for the user.
+     */
+    public function storeMediaSocial(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'nom' => ['required', 'string', 'max:255'],
+            'url' => ['required', 'string', 'max:255'],
+            'icone' => ['nullable', 'string', 'max:50'],
+        ]);
+
+        $request->user()->mediaSocials()->create($validated);
+
+        return Redirect::route('profile.edit')->with('status', 'media-social-added');
+    }
+
+    /**
+     * Update a media social.
+     */
+    public function updateMediaSocial(Request $request, MediaSocial $mediaSocial): RedirectResponse
+    {
+        // Vérifier que l'utilisateur possède ce média social
+        if ($mediaSocial->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'nom' => ['required', 'string', 'max:255'],
+            'url' => ['required', 'string', 'max:255'],
+            'icone' => ['nullable', 'string', 'max:50'],
+        ]);
+
+        $mediaSocial->update($validated);
+
+        return Redirect::route('profile.edit')->with('status', 'media-social-updated');
+    }
+
+    /**
+     * Delete a media social.
+     */
+    public function destroyMediaSocial(Request $request, MediaSocial $mediaSocial): RedirectResponse
+    {
+        // Vérifier que l'utilisateur possède ce média social
+        if ($mediaSocial->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        $mediaSocial->delete();
+
+        return Redirect::route('profile.edit')->with('status', 'media-social-deleted');
     }
 }

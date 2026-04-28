@@ -10,9 +10,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'country', 'email', 'status', 'role', 'password'])]
+#[Fillable(['name', 'id_country', 'email', 'status', 'role', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -58,11 +59,15 @@ class User extends Authenticatable
         });
 
     }
-    public function countries(): BelongsTo
-        {
-        // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
-        return $this->BelongsTo(Country::class, 'id_country');
-        }
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'id_country', 'id_country');
+    }
+
+    public function mediaSocials(): HasMany
+    {
+        return $this->hasMany(MediaSocial::class);
+    }
 
 
 }

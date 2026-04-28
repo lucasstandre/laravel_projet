@@ -5,7 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ChansonController;
+use App\Http\Controllers\CountryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MediaSociaux;
 
@@ -21,33 +21,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-// Route des controlleurs
+    // Routes pour gérer les médias sociaux
+    Route::post('/profile/media', [ProfileController::class, 'storeMediaSocial'])->name('profile.media.store');
+    Route::put('/profile/media/{mediaSocial}', [ProfileController::class, 'updateMediaSocial'])->name('profile.media.update');
+    Route::delete('/profile/media/{mediaSocial}', [ProfileController::class, 'destroyMediaSocial'])->name('profile.media.destroy');
+
+    // Routes pour gérer le pays
+    Route::post('/profile/country', [CountryController::class, 'updateUserCountry'])->name('profile.country.update');
+    Route::delete('/profile/country', [CountryController::class, 'deleteUserCountry'])->name('profile.country.delete');
+});
 
 Route::controller(PlaylistController::class)->group(function() {
     Route::get('/playlists', 'index')->name('playlists');
     Route::get('/playlist/{id}', 'show')->name('playlist');
-    Route::get('/link/{link}', 'playlistLink')->name('playlistLink');
-    Route::get('/modification/playlist', 'edit')->name('modificationPlaylist');
-    Route::post('/enregistrement/playlist', 'update')->name('enregistrementPlaylist');
-});
-
-Route::middleware('auth')->controller(PlaylistController::class)->group(function() {
-    Route::get('/mesPlaylists', 'mesPlaylists')->name('mesPlaylists');
-});
-
-// Route pour rechercher un utilisateur dans le menu navigation
-Route::controller(UserController::class)->group(function() {
-    Route::get('/users', 'index')->name('users');
-    Route::get('/users/{user}', 'show')->name('users');
-});
-
-
-// Route pour quand on recherche un utilisateur
-Route::controller(UserController::class)->group(function() {
-    Route::get('/users', 'index')->name('users.show');
-    Route::get('/users/{user}', 'show')->name('users');
 });
 
 // Route pour la gestion des utilisateurs (CRUD)
@@ -56,32 +43,8 @@ Route::controller(UserController::class)->group(function() {
     Route::get('/users/{user}', 'show')->name('users.show');
 });
 
-<<<<<<< HEAD
-Route::controller(ChansonController::class)->group(function(){
-    Route::get('/chansons', 'index')->name('chansons');
-
-    Route::get('/chansons/create', 'create')->name('chansons.create');
-    Route::post('/chansons', 'store')->name('chansons.store');
-
-    Route::get('/chansons/{chanson}/edit', 'edit')->name('chansons.edit');
-    Route::put('/chansons/{chanson}', 'update')->name('chansons.update');
-
-    Route::delete('/chansons/{chanson}', 'destroy')->name('chansons.destroy');
-
-    Route::get('/chansons/{chanson}', 'show')->name('chanson');
-});
-
-Route::controller(AlbumController::class)->group(function(){
-    Route::get('/albums', 'index')->name('albums');
-
-
-});
-
-Route::middleware('auth')->controller(UserController::class)->group(function() {
-=======
 // Seul role admin peut accéder à ces routes
 Route::middleware(['auth', 'admin'])->controller(UserController::class)->group(function() {
->>>>>>> feature/users-page
     Route::get('/users/create', 'create')->name('users.create');
     Route::post('/users', 'store')->name('users.store');
     Route::get('/users/{user}/edit', 'edit')->name('users.edit');
@@ -101,15 +64,8 @@ Route::middleware(['auth', 'admin'])->controller(RoleController::class)->group(f
 
 
 // Routes pour les médias sociaux
-Route::controller(MediaSociaux::class)->group(function() {
-    Route::get('/media-sociaux', 'index')->name('media-sociaux.index');
-    Route::get('/media-sociaux/create', 'create')->name('media-sociaux.create');
-    Route::post('/media-sociaux', 'store')->name('media-sociaux.store');
-    Route::get('/media-sociaux/{id}', 'show')->name('media-sociaux.show');
-    Route::get('/media-sociaux/{id}/edit', 'edit')->name('media-sociaux.edit');
-    Route::put('/media-sociaux/{id}', 'update')->name('media-sociaux.update');
-    Route::delete('/media-sociaux/{id}', 'destroy')->name('media-sociaux.destroy');
-});
+use App\Http\Controllers\MediaSociaux as MediaSociauxController;
+Route::resource('mediasociaux', MediaSociauxController::class)->except(['show']);
 
 
 require __DIR__.'/auth.php';

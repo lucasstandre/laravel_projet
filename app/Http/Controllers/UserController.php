@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Country;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -16,24 +17,35 @@ class UserController extends Controller
     public function index(Request $request): View
     {
         $search = $request->input('search', '');
+        $pays = $request->input('pays', '');
         $filter = $request->input('filter', 'user');
 
-        $query = User::query()->withCount('playlists');
+        $query = User::query()->with('country')->withCount('playlists');
 
         if ($search) {
             $query->where('name', 'like', '%' . $search . '%');
         }
 
+        // Filter by country
+        if ($pays) {
+            $query->where('id_country', $pays);
+        }
+
         // Si search est vide, on ne fait pas la requete et on retourne une collection vide pour éviter de charger tous les utilisateurs
-        $users = $search
+        $users = ($search || $pays)
             ? $query->orderBy('name')->paginate(10)->withQueryString()
             : collect();
+
+        // Get all countries for the filter
+        $countries = Country::orderBy('name_country')->get();
 
         return view('users.index', [
             'users' => $users,
             'search' => $search,
+            'pays' => $pays,
             'filter' => $filter,
-            'hasSearched' => !empty($search)
+            'countries' => $countries,
+            'hasSearched' => !empty($search) || !empty($pays)
         ]);
     }
 
@@ -46,7 +58,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'country' => ['nullable', 'integer', 'exists:countries,id_country'],
+            'id_country' => ['nullable', 'integer', 'exists:countries,id_country'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
 
@@ -54,7 +66,7 @@ class UserController extends Controller
 
         User::create([
             'name' => $validated['name'],
-            'country' => $validated['country'] ?? null,
+            'id_country' => $validated['id_country'] ?? null,
             'email' => $validated['email'],
             'status' => 0,
             'role' => 2,
@@ -73,14 +85,14 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'country' => ['nullable', 'integer', 'exists:countries,id_country'],
+            'id_country' => ['nullable', 'integer', 'exists:countries,id_country'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
         $updateData = [
             'name' => $validated['name'],
-            'country' => $validated['country'] ?? null,
+            'id_country' => $validated['id_country'] ?? null,
             'email' => $validated['email'],
         ];
 

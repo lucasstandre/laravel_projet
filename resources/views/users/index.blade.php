@@ -16,27 +16,41 @@
         @endif
 
         <!-- Filtre et recherche -->
-        <div class="flex gap-4 mb-6">
+        <div class="flex gap-4 mb-6" style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
             <x-search-bar action="/users" placeholder="Trouver un utilisateur..." />
-        <form action="/users" method="GET">
-        <x-filtre
-            name="pays"
-            label="Pays"
-        :options="[
-            //Va chercher dans la bd a place
-
-        ]"
-        />
+            <form action="/users" method="GET" style="display: flex; gap: 1rem; align-items: flex-end;">
+                @csrf
+                @if (!empty($search))
+                    <input type="hidden" name="search" value="{{ $search }}">
+                @endif
+                <div style="display: flex; flex-direction: column;">
+                    <label style="color: rgb(196, 214, 241, 0.75); font-size: 0.9rem; margin-bottom: 0.4rem;">Pays</label>
+                    <select name="pays" style="padding: 0.6rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
+                        <option value="">-- Tous les pays --</option>
+                        @foreach($countries as $country)
+                            <option value="{{ $country->id_country }}" {{ $pays == $country->id_country ? 'selected' : '' }}>
+                                {{ $country->name_country }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="submit" style="padding: 0.6rem 1.2rem; border: none; border-radius: 8px; background: #ffc500; color: #0b1528; font-weight: 600; cursor: pointer;">Filtrer</button>
+            </form>
         </div>
-        </form>
 
 
 
         @if ($users->count() > 0)
             <p style="margin-bottom: 1rem; font-size: 0.9rem; color: rgb(196, 214, 241, 0.6);">
-
-
-                Résultats pour "<strong style="color: #ffc500;">{{ $search }}</strong>" ({{ $users->total() }} utilisateur(s))
+                Résultats
+                @if ($search)
+                    pour "<strong style="color: #ffc500;">{{ $search }}</strong>"
+                @endif
+                @if ($pays)
+                    @php $selectedCountry = $countries->find($pays); @endphp
+                    en <strong style="color: #ffc500;">{{ $selectedCountry->name_country ?? 'N/A' }}</strong>
+                @endif
+                ({{ $users->total() }} utilisateur(s))
             </p>
 
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
@@ -55,7 +69,16 @@
                     @foreach ($users as $user)
                         <tr style="border-bottom: 1px solid rgba(126, 162, 211, 0.1); transition: background 150ms ease;">
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->name }}</td>
-                            <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->country ?? '-' }}</td>
+                            <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">
+                                @if ($user->country && is_object($user->country))
+                                    {{ $user->country->name_country }}
+                                @elseif ($user->id_country)
+                                    @php $country = \App\Models\Country::find($user->id_country); @endphp
+                                    {{ $country ? $country->name_country : '-' }}
+                                @else
+                                    -
+                                @endif
+                            </td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->email }}</td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">
                                 @if (auth()->check() && (int) auth()->user()->role === 1)
@@ -117,10 +140,20 @@
                 {{ $users->links() }}
             </div>
         @elseif ($hasSearched)
-            <p style="text-align: center; color: rgb(196, 214, 241, 0.6); padding: 2rem;">Aucun utilisateur trouvé pour "<strong style="color: #ffc500;">{{ $search }}</strong>".</p>
+            <p style="text-align: center; color: rgb(196, 214, 241, 0.6); padding: 2rem;">
+                Aucun utilisateur trouvé
+                @if ($search)
+                    pour "<strong style="color: #ffc500;">{{ $search }}</strong>"
+                @endif
+                @if ($pays)
+                    @php $selectedCountry = $countries->find($pays); @endphp
+                    en <strong style="color: #ffc500;">{{ $selectedCountry->name_country ?? 'N/A' }}</strong>
+                @endif
+                .
+            </p>
         @else
             <p style="text-align: center; color: rgb(196, 214, 241, 0.6); padding: 3rem; font-size: 1.1rem;">
-                Tapez le nom d'un utilisateur pour commencer...
+                Tapez le nom d'un utilisateur ou sélectionnez un pays pour commencer...
             </p>
         @endif
     </div>
