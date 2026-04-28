@@ -278,6 +278,7 @@ class PlaylistController extends Controller
     public function show(Request $request, int $idPlaylist)
     {
         if ($request->routeIs('playlist')) {
+
         $playlist = Playlist::find($idPlaylist);
         if(is_null($playlist))
             return abort(404); //Redirige vers 404 not found

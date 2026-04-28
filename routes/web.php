@@ -42,8 +42,15 @@ Route::middleware('auth')->group(function () {
 
 Route::controller(PlaylistController::class)->group(function() {
     Route::get('/playlists', 'index')->name('playlists');
+
+    Route::middleware('auth')->group(function() {
+        Route::get('/playlist/modifier', 'edit')->name('modificationPlaylist');
+        Route::post('/playlist/enregistrer', 'update')->name('enregistrementPlaylist');
+    });
+
     Route::get('/playlist/{id}', 'show')->name('playlist');
 });
+
 
 // Route pour la gestion des utilisateurs (CRUD)
 Route::controller(UserController::class)->group(function() {
