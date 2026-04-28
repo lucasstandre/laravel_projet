@@ -1,8 +1,4 @@
-@extends('layouts.main')
-
-@section('title', 'Ajouter un utilisateur')
-
-@section('content')
+<x-app-layout>
 <div style="background: linear-gradient(105deg, #01060f 0%, #03152d 52%, #04142b 100%); min-height: 100vh; padding: 2rem; color: #dbe7ff;">
     <div style="max-width: 700px; margin: 0 auto;">
         <h1 style="margin: 0 0 1rem;">Ajouter un utilisateur</h1>
@@ -42,4 +38,4 @@
         </form>
     </div>
 </div>
-@endsection
+</x-app-layout>

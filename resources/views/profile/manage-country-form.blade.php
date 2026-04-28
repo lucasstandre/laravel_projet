@@ -16,7 +16,7 @@
             @if ($user->country)
                 <div style="padding: 1rem; background: rgba(28, 50, 84, 0.3); border-radius: 6px; border-left: 3px solid #ffc500; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <p style="margin: 0; font-size: 1rem; color: #dbe7ff; font-weight: 600;">{{ $user->country->nom }}</p>
+                        <p style="margin: 0; font-size: 1rem; color: #dbe7ff; font-weight: 600;">{{ $user->country->name_country }}</p>
                     </div>
                     <form action="{{ route('profile.country.delete') }}" method="POST" style="display: inline;">
                         @csrf
@@ -28,7 +28,7 @@
                     </form>
                 </div>
             @else
-                <p style="text-align: center; color: rgb(196, 214, 241, 0.6); padding: 1.5rem; font-style: italic;">Aucun pays sélectionné (N/A)</p>
+                <p style="text-align: center; color: rgb(196, 214, 241, 0.6); padding: 1.5rem; font-style: italic;">Aucun pays sélectionné</p>
             @endif
         </div>
 
@@ -46,7 +46,7 @@
                         <option value="">-- Choisir un pays --</option>
                         @foreach ($countries as $country)
                             <option value="{{ $country->id_country }}" {{ $user->id_country === $country->id_country ? 'selected' : '' }}>
-                                {{ $country->nom }}
+                                {{ $country->name_country }} {{-- Affiche le nom du pays dans la liste déroulante --}}
                             </option>
                         @endforeach
                     </select>

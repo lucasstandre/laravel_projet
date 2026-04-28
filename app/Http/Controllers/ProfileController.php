@@ -19,12 +19,23 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        $mediaSocials = $request->user()->mediaSocials;
+        $user = $request->user()->load('subscription.subscriptionType');
+        $mediaSocials = $user->mediaSocials;
         $countries = Country::all();
-        $subscription = $request->user()->subscription ?? Subscription::create(['user_id' => $request->user()->id, 'type' => 'de base']);
+
+        // Si pas de subscription, en créer une avec les deux colonnes (type ET subscription_type_id)
+        if (!$user->subscription) {
+            $subscription = Subscription::create([
+                'user_id' => $user->id,
+                'subscription_type_id' => 1,
+                'type' => 'de base'  // Inclure 'type' aussi
+            ]);
+        } else {
+            $subscription = $user->subscription;
+        }
 
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
             'mediaSocials' => $mediaSocials,
             'countries' => $countries,
             'subscription' => $subscription,

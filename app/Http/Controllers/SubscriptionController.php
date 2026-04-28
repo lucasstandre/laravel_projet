@@ -15,13 +15,20 @@ class SubscriptionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'type' => ['required', 'in:de base,premium'],
+            'subscription_type_id' => ['required', 'exists:subscription_types,id'],
         ]);
+
+        // Map subscription_type_id to type
+        $typeMap = [1 => 'de base', 2 => 'premium'];
+        $type = $typeMap[$validated['subscription_type_id']] ?? 'de base';
 
         // Créer ou mettre à jour l'abonnement
         Subscription::updateOrCreate(
             ['user_id' => $request->user()->id],
-            ['type' => $validated['type']]
+            [
+                ...$validated,
+                'type' => $type
+            ]
         );
 
         return Redirect::route('profile.edit')->with('status', 'subscription-created');
@@ -33,17 +40,26 @@ class SubscriptionController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'type' => ['required', 'in:de base,premium'],
+            'subscription_type_id' => ['required', 'exists:subscription_types,id'],
         ]);
 
         $subscription = $request->user()->subscription;
 
+        // Map subscription_type_id to type
+        $typeMap = [1 => 'de base', 2 => 'premium'];
+        $type = $typeMap[$validated['subscription_type_id']] ?? 'de base';
+
         if ($subscription) {
-            $subscription->update($validated);
+            $subscription->update([
+                ...$validated,
+                'type' => $type
+            ]);
+            $subscription->refresh();
         } else {
             Subscription::create([
                 'user_id' => $request->user()->id,
-                'type' => $validated['type'],
+                ...$validated,
+                'type' => $type
             ]);
         }
 
@@ -51,16 +67,21 @@ class SubscriptionController extends Controller
     }
 
     /**
-     * Delete subscription (reset to 'de base')
+     * Delete subscription (reset to 'de base' - ID 1)
      */
     public function destroy(Request $request): RedirectResponse
     {
         $subscription = $request->user()->subscription;
 
-        if ($subscription && $subscription->type === 'premium') {
-            $subscription->update(['type' => 'de base']);
+        if ($subscription) {
+            // Rétrograder à l'abonnement de base (ID 1, type 'de base')
+            $subscription->update([
+                'subscription_type_id' => 1,
+                'type' => 'de base'
+            ]);
         }
 
         return Redirect::route('profile.edit')->with('status', 'subscription-deleted');
     }
 }
+

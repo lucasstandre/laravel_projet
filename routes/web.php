@@ -49,6 +49,42 @@ Route::controller(UserController::class)->group(function() {
     Route::get('/users/{user}', 'show')->name('users.show');
 });
 
+// Route de debug
+Route::get('/debug-users', function() {
+    $users = \App\Models\User::with('country')->limit(5)->get();
+    $debug = [];
+    foreach($users as $user) {
+        $debug[] = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'id_country' => $user->id_country,
+            'country_attr' => $user->getAttribute('country'),
+            'country_relation' => $user->country ? $user->country->name_country : null,
+            'all_attributes' => $user->getAttributes(),
+        ];
+    }
+    return response()->json($debug);
+});
+
+// Test subscription structure
+Route::get('/test-subscription', function() {
+    $user = \App\Models\User::first();
+    if (!$user) {
+        return response()->json(['error' => 'No users found']);
+    }
+
+    $subscription = $user->subscription;
+    $tables = \Illuminate\Support\Facades\DB::select("DESCRIBE subscriptions");
+
+    return response()->json([
+        'user_id' => $user->id,
+        'subscription' => $subscription ? $subscription->getAttributes() : null,
+        'table_structure' => array_map(function($col) {
+            return $col->Field . ' (' . $col->Type . ')';
+        }, $tables),
+    ]);
+});
+
 // Seul role admin peut accéder à ces routes
 Route::middleware(['auth', 'admin'])->controller(UserController::class)->group(function() {
     Route::get('/users/create', 'create')->name('users.create');

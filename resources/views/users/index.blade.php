@@ -1,8 +1,4 @@
-@extends('layouts.main')
-
-@section('title', 'Utilisateurs - Sonora')
-
-@section('content')
+<x-app-layout>
 <div style="background: linear-gradient(105deg, #01060f 0%, #03152d 52%, #04142b 100%); color: #dbe7ff; font-family: 'Manrope', sans-serif; min-height: 100vh; padding: 2rem;">
     <div style="max-width: 1000px; margin: 0 auto;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
@@ -70,14 +66,12 @@
                         <tr style="border-bottom: 1px solid rgba(126, 162, 211, 0.1); transition: background 150ms ease;">
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->name }}</td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">
-                                @if ($user->country && is_object($user->country))
-                                    {{ $user->country->name_country }}
-                                @elseif ($user->id_country)
-                                    @php $country = \App\Models\Country::find($user->id_country); @endphp
-                                    {{ $country ? $country->name_country : '-' }}
-                                @else
-                                    -
-                                @endif
+                                @php
+                                    $countryName = $user->country_name ?? '-';
+                                    // DEBUG
+                                    error_log("User: {$user->name}, id_country: {$user->id_country}, country_name: {$countryName}");
+                                @endphp
+                                {{ $countryName }}
                             </td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->email }}</td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">
@@ -158,3 +152,4 @@
         @endif
     </div>
 </div>
+</x-app-layout>
