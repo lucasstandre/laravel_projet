@@ -3,33 +3,28 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-
-        <title>{{ config('app.name', 'Laravel') }}</title>
-
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=sora:400,600,700,800|manrope:400,500,600,700&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
+        <title>Sonora - Connexion</title>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="auth-shell antialiased">
-        <main class="auth-wrapper">
-            <section class="auth-brand-panel">
-                <a class="auth-brand-link" href="{{ route('home') }}">Sonora</a>
-                <p class="auth-brand-copy">Votre appli preferée pour écouter vos musiques préférées</p>
-            </section>
-
-            <div class="auth-form-panel">
-                <div class="auth-form-slot">
-
-                    <div class="mt-6 max-w-7xl mx-auto sm:px-6 lg:px-8">
-                        @include('messageFlash')
-                    </div>
-                    {{ $slot }}
+    <body class="font-sans antialiased bg-[#01060f]">
+        <div class="min-h-screen flex flex-col md:flex-row">
+            <div class="hidden md:flex flex-col justify-center p-12 lg:p-24 bg-gradient-to-br from-[#fcd34d] via-[#b45309] to-[#000d1a] w-1/2 relative">
+                <div class="relative z-10">
+                    <h1 class="text-6xl lg:text-8xl font-black tracking-tighter text-white mb-6">SONORA</h1>
+                    <p class="text-white/80 text-xl lg:text-2xl italic leading-tight">L'expérience musicale ultime.</p>
                 </div>
             </div>
-        </main>
+
+            <div class="w-full md:w-1/2 flex items-center justify-center p-4 sm:p-8 bg-[#01060f]">
+                <div class="w-full max-w-md">
+                    <div class="text-center mb-8 md:hidden">
+                        <h1 class="text-4xl font-black tracking-tighter text-yellow-500">SONORA</h1>
+                    </div>
+                    <div class="bg-[#000d1a] p-6 sm:p-10 rounded-[2rem] sm:rounded-[3rem] border border-white/5 shadow-2xl">
+                        {{ $slot }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

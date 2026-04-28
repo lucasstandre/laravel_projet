@@ -47,7 +47,7 @@ Route::controller(PlaylistController::class)->group(function() {
         Route::get('/playlist/modifier', 'edit')->name('modificationPlaylist');
         Route::post('/playlist/enregistrer', 'update')->name('enregistrementPlaylist');
     });
-
+    Route::get('/link/{link}', 'playlistLink')->name('playlistLink');
     Route::get('/playlist/{id}', 'show')->name('playlist');
 });
 
