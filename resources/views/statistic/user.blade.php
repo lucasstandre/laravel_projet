@@ -42,11 +42,11 @@
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-[#111827] rounded-3xl p-8 border border-white/5 text-center group hover:bg-[#161e2e] transition-all">
                     <p class="text-[10px] uppercase font-black text-gray-500 mb-2 tracking-widest">Listening time (30 days)</p>
-                    <p class="text-3xl font-bold text-white">{{ round($listeningTime30Days / 3600) }}h</p>
+                    <p class="text-3xl font-bold text-white">{{ round($listeningTime30Days)  }}min</p>
                 </div>
                 <div class="bg-[#111827] rounded-3xl p-8 border border-white/5 text-center group hover:bg-[#161e2e] transition-all">
                     <p class="text-[10px] uppercase font-black text-gray-500 mb-2 tracking-widest">Listening time (year)</p>
-                    <p class="text-3xl font-bold text-white">{{ round($listeningTimeYear / 3600) }}h</p>
+                    <p class="text-3xl font-bold text-white">{{ round($listeningTimeYear) }}min</p>
                 </div>
 
                 <div class="bg-[#111827] rounded-3xl p-8 border border-white/5 text-center">

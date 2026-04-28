@@ -146,12 +146,12 @@ class StatisticController extends Controller
         $listeningTime30Days = (int) DB::table('ecoutes')
             ->where('id_utilisateur', $userId)
             ->where('timestamp', '>=', date('Y-m-d H:i:s', strtotime('-30 days')))
-            ->sum('duree');
+            ->sum('duree') / 60;
 
         $listeningTimeYear = (int) DB::table('ecoutes')
             ->where('id_utilisateur', $userId)
             ->where('timestamp', '>=', date('Y-01-01 00:00:00'))
-            ->sum('duree');
+            ->sum('duree') /60;
 
         $totalListens = DB::table('ecoutes')->where('id_utilisateur', $userId)->count();
 
@@ -278,7 +278,7 @@ class StatisticController extends Controller
                     break;
                 }
 
-                $rankPosition = $rankPosition ++;
+                $rankPosition++;
             }
 
             // donc si ta une position on met # devant sinon NR pour not ranked
