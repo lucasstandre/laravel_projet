@@ -25,6 +25,7 @@ Route::controller(EcouteController::class)->group(function() {
 });
 Route::middleware('auth:sanctum')->controller(EcouteController::class)->group(function() {
     Route::post('/ecoute/{id}','addEcoute')->name('addEcouteApi');
+    Route::get('/ecoutes/recent', 'lastThreeListens')->name('lastThreeListensApi');
 });
 Route::middleware('auth:sanctum')->controller(PlaylistController::class)->group(function() {
     Route::get('/mesPlaylists', 'mesPlaylists')->name('mesPlaylistsApi');

@@ -13,7 +13,7 @@
                     </div>
                 </div>
 
-                @if(Auth::check() && (Auth::id() == $playlist->id_creator || Auth::user()->role == 3 ))
+                @if(Auth::check() && (Auth::id() == $playlist->id_creator || Auth::user()->role == 1 ))
                 <form method="get" action="{{ route('modificationPlaylist') }}">
                     @csrf
                     <button type="submit" name="id_playlist" value="{{ $playlist->id_playlist }}"

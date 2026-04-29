@@ -128,7 +128,7 @@ class StatisticController extends Controller
             $isVerified = true;
         }
 
-        $accountAge = round(now()->diffInDays(\Carbon\Carbon::parse($user->created_at)) / 365.25, 1);
+        $accountAge = abs(round(now()->diffInDays(\Carbon\Carbon::parse($user->created_at)) / 365.25, 1));
         // par default public mais private si on specifie le statu a 0
         $userStatus = 'Public';
         if ($user->status != 0) {

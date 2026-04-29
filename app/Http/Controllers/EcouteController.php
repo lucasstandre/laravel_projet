@@ -11,6 +11,39 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
 class EcouteController extends Controller
 {
+        /**
+         * 3 derniere ecoute
+         */
+        public function lastThreeListens(): JsonResponse
+        {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json(['ERREUR' => 'Utilisateur non connecté'], 401);
+            }
+
+            // 3 derniere toune
+            $ecoutes = Ecoute::with('chanson')
+                ->where('id_utilisateur', $user->id)
+                ->orderByDesc('timestamp')
+                ->limit(3)
+                ->get();
+
+            $historique = [];
+            foreach ($ecoutes as $ecoute) {
+                $historique[] = [
+                    'ecoute_id' => $ecoute->id_ecoute,
+                    'chanson' => $ecoute->chanson,
+                    'duree' => $ecoute->duree,
+                    'timestamp' => $ecoute->timestamp
+                ];
+            }
+
+            return response()->json([
+                'user_name' => $user->name,
+                'recent_listens' => $historique
+            ], 200);
+        }
     /**
      * Ajoute une ecoute a un user
      */
