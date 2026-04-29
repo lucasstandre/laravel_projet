@@ -15,7 +15,7 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
             @foreach ($playlists as $playlist)
                 <div style="background: #f9f9f9; padding: 1rem; border-radius: 4px; border: 1px solid #e0e0e0;">
-                    <h3 style="margin: 0 0 0.5rem 0;">{{ $playlist->name ?? 'Sans titre' }}</h3>
+                    <h3 style="margin: 0 0 0.5rem 0;">{{ $playlist->playlist ?? 'Sans titre' }}</h3>
                     <p style="margin: 0.25rem 0; font-size: 0.9rem; color: #666;">ID: #{{ $playlist->id_playlist }}</p>
                     {{--{{<p style="margin: 0.25rem 0; font-size: 0.9rem; color: #666;">Créée: {{ $playlist->created_at->format('d/m/Y') }}</p>}}--}}
                     <a href="{{ route('playlist', $playlist->id_playlist) }}" style="display: inline-block; margin-top: 0.75rem; color: #007bff; text-decoration: none;">Voir musiques</a>
