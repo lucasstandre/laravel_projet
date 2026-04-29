@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('date_sortie');
             $table->string('fichier',256);
             $table->integer('like')->default(0);
-            $table->Integer('id_album')->unsigned();
+            $table->Integer('id_album')->unsigned()->nullable();
             $table->unsignedBigInteger('id_genre');
             $table->bigInteger('id_artiste')->unsigned();
         });

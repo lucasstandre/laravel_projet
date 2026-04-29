@@ -12,35 +12,35 @@ class AlbumSeeder extends Seeder
         DB::table('albums')->insert([
             [
                 'nom' => 'Midnight Collection',
-                'photo' => 'midnight.jpg',
+                'photo' => 'public/images/midnight.jpg',
             ],
             [
                 'nom' => 'Summer Hits',
-                'photo' => 'summer.jpg',
+                'photo' => 'public/images/summer.jpg',
             ],
             [
                 'nom' => 'Dark Waves Album',
-                'photo' => 'dark_waves.jpg',
+                'photo' => 'public/images/dark_waves.jpg',
             ],
             [
                 'nom' => 'Neon Dreams',
-                'photo' => 'neon.jpg',
+                'photo' => 'public/images/neon.jpg',
             ],
             [
                 'nom' => 'Acoustic Sessions',
-                'photo' => 'acoustic.jpg',
+                'photo' => 'public/images/acoustic.jpg',
             ],
             [
                 'nom' => 'Urban Flow Vol.1',
-                'photo' => 'urban.jpg',
+                'photo' => 'public/images/urban.jpg',
             ],
             [
                 'nom' => 'Ocean Eyes Project',
-                'photo' => 'ocean.jpg',
+                'photo' => 'public/images/ocean.jpg',
             ],
             [
                 'nom' => 'Electric Soul EP',
-                'photo' => 'electric.jpg',
+                'photo' => 'public/images/electric.jpg',
             ],
         ]);
     }
