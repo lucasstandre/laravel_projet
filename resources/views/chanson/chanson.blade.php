@@ -1,8 +1,25 @@
 @extends('layouts.main')
 
-@section('title', 'Afficher une chanson')
+@section('title', 'Modifier une chanson')
 
 @section('content')
+
+<style>
+    .edit-page { background: linear-gradient(105deg, #01060f 0%, #03152d 52%, #04142b 100%); min-height: 100vh; padding: 2rem; color: #dbe7ff; }
+    .edit-container { max-width: 700px; margin: 0 auto; }
+    .edit-title { margin: 0 0 1rem; }
+    .edit-errors { margin-bottom: 1rem; padding: 0.8rem 1rem; border-radius: 8px; background: rgba(255, 122, 122, 0.2); border: 1px solid rgba(255, 122, 122, 0.5); color: #ffdede; }
+    .edit-errors ul { margin: 0; padding-left: 1rem; }
+    .edit-form { display: grid; gap: 0.8rem; }
+    .edit-label { display: block; color: #dbe7ff; }
+    .edit-input, .edit-select { width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff; box-sizing: border-box; }
+    .edit-input::placeholder { color: rgba(219, 231, 255, 0.4); }
+    .edit-actions { display: flex; gap: 0.7rem; margin-top: 0.5rem; }
+    .btn-save { padding: 0.7rem 1rem; border: none; border-radius: 8px; background: #ffc500; color: #0b1528; font-weight: 700; cursor: pointer; }
+    .btn-cancel { padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.4); color: #dbe7ff; text-decoration: none; }
+</style>
+
+
 <div class="edit-page">
     <div class="edit-container">
         <h1 class="edit-title">Modifier {{ $chanson->nom }}</h1>

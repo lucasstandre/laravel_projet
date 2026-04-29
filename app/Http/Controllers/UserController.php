@@ -104,10 +104,29 @@ class UserController extends Controller
     public function show(User $user): View
     {
         $playlists = $user->playlists()->paginate(10);
-        
+
         return view('users.show', [
             'user' => $user,
             'playlists' => $playlists
         ]);
+    }
+
+
+
+    public function destroyAccount(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+        ]);
+
+        if (!Hash::check($request->password, auth()->user()->password)) {
+            return back()->withErrors(['password' => 'Mot de passe incorrect.']);
+        }
+
+        $user = auth()->user();
+        auth()->logout();
+        $user->delete();
+
+        return redirect('/');
     }
 }

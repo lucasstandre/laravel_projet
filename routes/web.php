@@ -48,6 +48,12 @@ Route::controller(ChansonController::class)->group(function(){
 
     Route::get('/chansons', 'index')->name('chansons');
     Route::get('/chansons/{chanson}', 'show')->name('chanson'); // Utilisé par chansonApi
+
+    Route::get('/settings', function() {
+        return view('chanson.settings');
+    })->name('settings');
+
+    Route::delete('/account', [UserController::class, 'destroyAccount'])->name('account.destroy');
 });
 
 Route::middleware('auth')->controller(ChansonController::class)->group(function(){

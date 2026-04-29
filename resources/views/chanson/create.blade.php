@@ -33,7 +33,7 @@
         <a href="#">Profile</a>
         <a href="#" class="active">Musique</a>
         <a href="#">Analytics</a>
-        <a href="#">Settings</a>
+        <a href="{{ route('settings') }}">Settings</a>
     </div>
 
     {{-- Formulaire --}}

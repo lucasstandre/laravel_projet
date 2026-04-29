@@ -6,7 +6,6 @@ use App\Models\Album;
 use Illuminate\Http\Request;
 use App\Models\Genre;
 use App\Models\User;
-use Illuminate\View\View;
 use App\Http\Resources\AlbumResource;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,7 +15,7 @@ class AlbumController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request) : View
+    public function index(Request $request)
     {
         $query = Album::query();
 
@@ -31,7 +30,11 @@ class AlbumController extends Controller
                 $q->where('id_genre', $request->genre);
             });
         }
-
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json(
+                $query->select('id_album', 'nom', 'photo')->get()
+            );
+        }
         $albums = $query->get();
         return view ('album.albums', [
             'albums' => Album::with('chansons.genre', 'chansons.user')->get(),
@@ -139,6 +142,10 @@ class AlbumController extends Controller
             'id_artiste' => $request->id_artiste,
         ]);
 
+        if ($request->expectsJson()) {
+            return new AlbumResource($album);
+        }
+
         return redirect()->route('albums.edit', $album);
     }
 
@@ -162,6 +169,10 @@ class AlbumController extends Controller
 
         $album->chansons()->update(['id_album' => null]);
         $album->delete();
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => 'Album supprimé.']);
+        }
         return redirect()->route('albums');
     }
     public function chansons()

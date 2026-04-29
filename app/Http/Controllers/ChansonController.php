@@ -146,15 +146,16 @@ class ChansonController extends Controller
      */
     public function show(Request $request, Chanson $chanson)
     {
-        if($user->role != 1 && $user->id != $chanson->id_artiste){
-            if ($request->expectsJson()) {
-                return response()->json(['error' => "Acces refuse."], 403);
-            }
-            return redirect()->route('chansons')
-                ->with('error', "Vous n'avez pas le droit de modifier cette chanson.");
+        if (request()->expectsJson()) {
+            return new ChansonResource($chanson);
         }
 
-        return new ChansonResource($chanson);
+        return view('chanson.chanson', [
+            'chanson' => $chanson,
+            'albums' => Album::all(),
+            'genres' => Genre::all(),
+            'artistes' => User::all(),
+        ]);
 
         /*return view('chanson.chanson', [
             'chanson' => $chanson,
@@ -182,7 +183,7 @@ class ChansonController extends Controller
                 ->with('error', "Vous n'avez pas le droit de modifier cette chanson.");
         }
 
-        return view('chanson.edit',[
+        return view('chanson.chanson',[
             'chanson' => $chanson,
             'albums' => Album::all(),
             'genres' => Genre::all(),
@@ -220,6 +221,9 @@ class ChansonController extends Controller
 
         $chanson->update($validated);
 
+        if ($request->expectsJson()) {
+                return response()->json(["Changement fait"], 200);
+        }
         return redirect()->route('chanson', $chanson)->with('success', 'Chanson modifiée.');
     }
 
