@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\UserCollection;
 use App\Models\User;
 use App\Models\Country;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -11,6 +16,104 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
+    /**
+     * API: List all users with pagination
+     */
+    public function indexApi(Request $request): UserCollection
+    {
+        $search = $request->input('search', '');
+        $pays = $request->input('pays', '');
+        $perPage = $request->input('per_page', 10);
+
+        $query = User::with('country', 'subscription', 'mediaSocials');
+
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%');
+        }
+
+        if ($pays) {
+            $query->where('id_country', $pays);
+        }
+
+        $users = $query->orderBy('name')->paginate($perPage);
+
+        return new UserCollection($users->map(fn ($user) => new UserResource($user)));
+    }
+
+    /**
+     * API: Get single user by ID
+     */
+    public function showApi(User $user): UserResource
+    {
+        $user->load('country', 'subscription', 'mediaSocials');
+        return new UserResource($user);
+    }
+
+    /**
+     * API: Create new user (admin only)
+     */
+    public function storeApi(UserStoreRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'id_country' => $validated['id_country'] ?? null,
+            'role' => $validated['role'] ?? 2,
+            'status' => $validated['status'] ?? 0,
+        ]);
+
+        $user->load('country', 'subscription', 'mediaSocials');
+
+        return response()->json(
+            new UserResource($user),
+            201
+        );
+    }
+
+    /**
+     * API: Update user (admin or self)
+     */
+    public function updateApi(UserUpdateRequest $request, User $user): UserResource
+    {
+        $validated = $request->validated();
+
+        $updateData = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'id_country' => $validated['id_country'] ?? null,
+        ];
+
+        if (isset($validated['role']) && $request->user()->role === 1) {
+            $updateData['role'] = $validated['role'];
+        }
+
+        if (isset($validated['status']) && $request->user()->role === 1) {
+            $updateData['status'] = $validated['status'];
+        }
+
+        if (!empty($validated['password'])) {
+            $updateData['password'] = Hash::make($validated['password']);
+        }
+
+        $user->update($updateData);
+        $user->load('country', 'subscription', 'mediaSocials');
+
+        return new UserResource($user);
+    }
+
+    /**
+     * API: Delete user (admin only)
+     */
+    public function destroyApi(User $user): JsonResponse
+    {
+        $user->delete();
+        return response()->json(['message' => 'User deleted successfully'], 204);
+    }
+
     /**
      * Display list of users with search
      */

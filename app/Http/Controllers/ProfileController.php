@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Resources\ProfileResource;
 use App\Models\MediaSocial;
 use App\Models\Country;
 use App\Models\Subscription;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +16,16 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    /**
+     * Get the authenticated user's profile.
+     */
+    // Pour l'api, on retourne une ressource qui contient les données de l'utilisateur et les relations (country, subscription, mediaSocials)
+    public function getProfile(Request $request): ProfileResource
+    {
+        $user = $request->user()->load('subscription.subscriptionType', 'country', 'mediaSocials');
+        return new ProfileResource($user);
+    }
+
     /**
      * Display the user's profile form.
      */

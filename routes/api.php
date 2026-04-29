@@ -4,6 +4,8 @@ use App\Models\Playlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlaylistController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\EcouteController;
 use App\Http\Controllers\StatisticController;
@@ -11,6 +13,23 @@ use App\Http\Controllers\StatisticController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+// API Profil
+Route::middleware('auth:sanctum')->controller(ProfileController::class)->group(function() {
+    Route::get('/profile', 'getProfile')->name('api.profile.show');
+});
+
+// API Utilisateurs
+Route::middleware('auth:sanctum')->controller(UserController::class)->group(function() {
+    Route::get('/users', 'indexApi')->name('api.users.index');
+    Route::get('/users/{user}', 'showApi')->name('api.users.show');
+});
+
+Route::middleware('auth:sanctum', 'admin')->controller(UserController::class)->group(function() {
+    Route::post('/users', 'storeApi')->name('api.users.store');
+    Route::put('/users/{user}', 'updateApi')->name('api.users.update');
+    Route::delete('/users/{user}', 'destroyApi')->name('api.users.destroy');
+});
 
 Route::controller(PlaylistController::class)->group(function() {
     Route::get('/playlist/{id}', 'show')->name('playlistApi');
