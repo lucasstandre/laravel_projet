@@ -4,6 +4,7 @@ use App\Models\Playlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlaylistController;
+use App\Http\Controllers\Auth\ApiAuthController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\EcouteController;
 use App\Http\Controllers\ProfileController;
@@ -14,12 +15,18 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::prefix('auth')->controller(ApiAuthController::class)->group(function () {
+    Route::post('/login', 'login')->name('api.auth.login');
+    Route::post('/register', 'register')->name('api.auth.register');
+    Route::post('/logout', 'logout')->middleware('auth:sanctum')->name('api.auth.logout');
+});
+
 // API routes pour le profil de l'utilisateur connecté
 Route::middleware('auth:sanctum')->controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'getProfile')->name('api.profile.show');
 });
 
-// Api routes pour la gestion des utilisateurs (CRUD)
+// Api routes pour users (CRUD)
 Route::middleware('auth:sanctum')->controller(UserController::class)->group(function () {
     Route::get('/users', 'indexApi')->name('api.users.index');
     Route::get('/users/{user}', 'showApi')->name('api.users.show');
@@ -64,4 +71,4 @@ Route::middleware('auth:sanctum')->prefix('statistics')->controller(StatisticCon
     Route::get('/artist/{id?}', 'artistStats')->name('api.statistics.artist');
 });
 
-Route::post('/token', [RegisteredUserController::class, 'show'])->name('token');
+Route::post('/token', [ApiAuthController::class, 'login'])->name('token');
