@@ -346,6 +346,7 @@ class PlaylistController extends Controller
         'playlist' => 'required',
         'description' => 'required'
         ], [
+
         'id_playlist.required' => 'L\'ID de la playlist est manquant.',
         'playlist.required' => 'Veuillez entrer le nom de la playlist.',
         'description.required' => 'Veuillez entrer une description.',

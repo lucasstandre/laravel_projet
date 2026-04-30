@@ -21,8 +21,8 @@ return new class extends Migration
             //pk
             $table->primary(['id_playlist', 'id_chanson']);
             //fk
-            $table->foreign('id_playlist')->references('id_playlist')->on('playlists');
-            $table->foreign('id_chanson')->references('id_chanson')->on('chansons');
+            $table->foreign('id_playlist')->references('id_playlist')->on('playlists')->onDelete('cascade');
+            $table->foreign('id_chanson')->references('id_chanson')->on('chansons')->onDelete('cascade');
         });
     }
 
