@@ -74,7 +74,7 @@ class StatisticController extends Controller
         $user = Auth::user();
         if ($id // si jai un id
         && $id != $user->id // et que lid nest pas le id du user
-        && $user->role != 3) { // et que lid nest pas admin
+        && $user->role != 1) { // et que lid nest pas admin
             abort(403, 'Accès non autorisé.'); // marche pas
         }
 
@@ -93,7 +93,7 @@ class StatisticController extends Controller
     public function showArtist(?int $id = null)
     {
         $user = Auth::user(); // meme chose que user
-        if ($id && $id != $user->id && $user->role != 3) {
+        if ($id && $id != $user->id && $user->role != 1) {
             abort(403, 'Accès non autorisé.');
         }
 
