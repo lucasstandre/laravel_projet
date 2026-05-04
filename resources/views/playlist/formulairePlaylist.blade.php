@@ -28,8 +28,9 @@
                     </div>
 
                     <div class="flex items-center gap-4 pt-4">
-                        <button class="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-black uppercase tracking-widest py-4 rounded-2xl transition-all shadow-lg shadow-yellow-500/20"
-                                type="submit">
+                        <button id="soumettre_playlist"
+                        class="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-black uppercase tracking-widest py-4 rounded-2xl transition-all shadow-lg shadow-yellow-500/20"
+                                type="button">
                             Enregistrer les modifications
                         </button>
                         <a href="{{ url()->previous() }}" class="px-8 py-4 text-gray-400 font-bold hover:text-white transition-all text-sm">
@@ -41,4 +42,77 @@
             </div>
         </div>
     </div>
+{{-- regex pas dans app.js pcq ca marchait pas--}}
+    <script>
+/****************************************************************************/
+/* Une expression régulière peut être définie sous la forme d'une constante */
+/* (car elle ne devrait pas changer durant l'exécution du script). En JS,   */
+/* une expression régulière est entourée de barres obliques (/).            */
+/****************************************************************************/
+const REGEX_PLAYLIST = /^[\p{L}\p{N}\s\-']{3,50}$/u;
+// lettre + nombre + espace, au moins 3 char max 50
+window.onload = () => {
+    const btnSoumettre = document.getElementById("soumettre_playlist");
+        if (btnSoumettre) {
+            btnSoumettre.addEventListener("click", validerFormulairePlaylist);
+        }
+        };
+
+        function validerFormulairePlaylist() {
+
+
+            let playlistInput = document.getElementById("playlist"),
+                descriptionInput = document.getElementById("description"),
+                valuePlaylist = playlistInput.value,
+                valueDescription = descriptionInput.value,
+                monFormulaire = playlistInput.closest("form"),
+                erreurs = [];
+
+
+            if (!REGEX_PLAYLIST.test(valuePlaylist)) {
+                erreurs.push("Le nom de la playlist est invalide (3 à 50 caractères, pas de symboles spéciaux).");
+            }
+            if (valueDescription.length < 5 || valueDescription.length > 250) {
+                erreurs.push("La description doit contenir entre 5 et 250 caractères.");
+            }
+            if (erreurs.length > 0) {
+                alert(erreurs.join("\n"));
+            } else if (monFormulaire) {
+                // fait le fetch
+                const formData = new FormData(monFormulaire);
+
+                fetch(monFormulaire.action, {
+                    method: 'POST',
+                    headers: {
+                        // comme dans le lab
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.erreurs) {
+                        // erreurs
+                        let messages = [];
+                        for (let cle in data.erreurs) {
+                            messages.push(data.erreurs[cle].join('\n'));
+                        }
+                        alert("Erreur de validation :\n" + messages.join('\n'));
+                    } else if (data.erreur) {
+                        alert("Erreur serveur : " + data.erreur);
+                    } else {
+                        alert("Succès : " + data.succes);
+                        // si ca marche on redirige
+                        window.location.href = "{{ route('playlists') }}";
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert("Une erreur inattendue est survenue.");
+                });
+            }
+        }
+    </script>
 </x-app-layout>

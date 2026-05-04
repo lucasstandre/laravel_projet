@@ -353,6 +353,10 @@ class PlaylistController extends Controller
         ]);
 
         if ($validation->fails()) {
+
+            if ($request->wantsJson()) {
+                return response()->json(['erreurs' => $validation->errors()], 403);
+            }
             return back()->withErrors($validation->errors())->withInput();
         }
 
@@ -362,7 +366,18 @@ class PlaylistController extends Controller
         $playlist->playlist = $contenuFormulaire['playlist'];
         $playlist->description = $contenuFormulaire['description'];
 
-        if ($playlist->save()) {
+        $succes = $playlist->save();
+
+        // Réponse pour une requête asynchrone (Fetch)
+        if ($request->wantsJson()) {
+            if ($succes) {
+                return response()->json(['succes' => 'La modification de la playlist a bien fonctionné.']);
+            }
+            return response()->json(['erreur' => 'La modification de la playlist n\'a pas fonctionné.'], 500);
+        }
+
+        // Réponse standard (Redirection)
+        if ($succes) {
             session()->flash('succes', 'La modification de la playlist a bien fonctionné.');
         } else {
             session()->flash('erreur', 'La modification de la playlist n\'a pas fonctionné.');
