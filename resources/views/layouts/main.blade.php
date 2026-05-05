@@ -8,5 +8,6 @@
 </head>
 <body style="font-family: sans-serif; margin: 0; min-height: 100vh; background: #01060f;">
     @yield('content')
+    @stack('scripts')
 </body>
 </html>

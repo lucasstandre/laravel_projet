@@ -4,62 +4,77 @@ namespace App\Http\Controllers;
 
 use App\Models\Genre;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class GenreController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Liste tous les genres
      */
     public function index()
     {
-        //
+        $genres = Genre::all();
+        return response()->json($genres, 200);
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Créer un nouveau genre
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'genre' => 'required|string|max:50|unique:genres,genre',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        $genre = Genre::create($request->all());
+        return response()->json($genre, 201);
     }
 
     /**
-     * Display the specified resource.
+     * Afficher un genre spécifique
      */
-    public function show(Genre $genre)
+    public function show($id)
     {
-        //
+        $genre = Genre::find($id);
+
+        if (!$genre) {
+            return response()->json(['message' => 'Genre non trouvé'], 404);
+        }
+
+        return response()->json($genre, 200);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Mettre à jour un genre
      */
-    public function edit(Genre $genre)
+    public function update(Request $request, $id)
     {
-        //
+        $genre = Genre::find($id);
+
+        if (!$genre) {
+            return response()->json(['message' => 'Genre non trouvé'], 404);
+        }
+
+        $genre->update($request->all());
+        return response()->json($genre, 200);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Supprimer un genre
      */
-    public function update(Request $request, Genre $genre)
+    public function destroy($id)
     {
-        //
-    }
+        $genre = Genre::find($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Genre $genre)
-    {
-        //
+        if (!$genre) {
+            return response()->json(['message' => 'Genre non trouvé'], 404);
+        }
+
+        $genre->delete();
+        return response()->json(['message' => 'Genre supprimé avec succès'], 200);
     }
 }

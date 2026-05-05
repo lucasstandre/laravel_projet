@@ -3,6 +3,7 @@
 @section('title', 'Albums')
 
 @section('content')
+
 <style>
     .albums-page { background: linear-gradient(105deg, #01060f 0%, #03152d 52%, #04142b 100%); min-height: 100vh; padding: 2rem; color: #dbe7ff; }
     .albums-container { max-width: 900px; margin: 0 auto; }
@@ -49,3 +50,7 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/albums.js') }}"></script>
+@endpush

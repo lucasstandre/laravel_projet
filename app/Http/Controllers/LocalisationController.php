@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Localisation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class LocalisationController extends Controller
 {

@@ -9,6 +9,7 @@ use App\Http\Controllers\PaysController;
 use App\Http\Controllers\LocalisationController;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\GenreController;
 
 // LOGIN
 Route::post('/login', function (Request $request) {
@@ -89,6 +90,10 @@ Route::middleware('auth:sanctum')->controller(PlaylistController::class)->group(
     Route::get('/mesLikes', 'likePlaylist')->name('likePlaylistApi');
 });
 
+
+
+
+Route::apiResource('genres', GenreController::class);
 
 // TOKEN
 Route::post('/token', [RegisteredUserController::class, 'show'])->name('token');

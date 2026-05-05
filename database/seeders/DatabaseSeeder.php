@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
             AlbumSeeder::class,
             ChansonSeeder::class,
             PaysSeeder::class,
+            LocalisationSeeder::class,
         ]);
     }
 }
