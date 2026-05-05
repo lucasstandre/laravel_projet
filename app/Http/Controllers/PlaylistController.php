@@ -13,10 +13,69 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Str;
 use App\Http\Resources\ProduitResource;
-
+use App\Models\Chanson;
 
 class PlaylistController extends Controller
 {
+    /**
+     * Suprime une chanson a la playlist
+     */
+    public function removeChanson(int $idPlaylist, int $idChanson) : JsonResponse
+    {
+        //pogne le user
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['ERREUR' => 'Unauthorized'], 401);
+        }
+        $chanson = Chanson::find($idChanson);
+        if (!$chanson) {
+        return response()->json(['ERREUR' => 'La chanson introuvable'], 404);
+        }
+        $playlist = Playlist::where('id_creator', $user->id)->where('id_playlist', $idPlaylist)->first();// double query, obliger dituliser first
+        if (!$playlist) {
+        return response()->json(['ERREUR' => 'Playlist introuvable'], 404);
+        }
+        try {
+        // on remove via attach
+        $playlist->chansons()->detach($idChanson);
+
+        return response()->json(['SUCCES' => 'Chanson ' .$chanson->nom . ' suprimer de la playlist ' . $playlist->playlist], 200); // dit quoi
+
+        } catch (QueryException $erreur) {
+            return response()->json(['ERREUR' => 'Le remove na pas marcher', 'details' => $erreur->getMessage()], 500);
+        } // remove la toune ou refuse
+    }
+
+    /**
+     * Ajoute une toune a la playlist
+     */
+    public function addChanson(int $idPlaylist, int $idChanson) : JsonResponse
+    {
+        //pogne le user
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['ERREUR' => 'Unauthorized'], 401);
+        }
+        $chanson = Chanson::find($idChanson);
+        $playlist = Playlist::where('id_creator', $user->id)->where('id_playlist', $idPlaylist)->first();// double query, obliger dituliser first
+        if (!$playlist) {
+        return response()->json(['ERREUR' => 'Playlist introuvable'], 404);
+        }
+        try {
+        // on add via attach
+        $playlist->chansons()->attach($idChanson, [
+            'date_ajout' => now()
+        ]);
+
+        return response()->json(['SUCCES' => 'Chanson ' .$chanson->nom . ' ajoutée à la playlist ' . $playlist->playlist], 200); // dit quoi
+
+    } catch (QueryException $erreur) {
+        return response()->json(['ERREUR' => 'L\'ajout a échoué', 'details' => $erreur->getMessage()], 500);
+    } // add la toune ou refuse
+
+    }
     /**
      * Pogne la playlist de like
      */
@@ -29,11 +88,12 @@ class PlaylistController extends Controller
             return response()->json(['ERREUR' => 'Unauthorized'], 401);
         }
 
-        $playlist_id = Playlist::where('id_creator', $user->id)->where('playlist', 'Liked')->get(); // double query
+        $playlist = Playlist::where('id_creator', $user->id)->where('playlist', 'Liked')->first(); // double query
 
         return response()->json([
             'user_id' => $user->id,
-            'playlist_id' => $playlist_id
+            'playlist_id' => $playlist->id_playlist,
+            'chansons' => $playlist->chansons
         ], 200);
     }
     /**
@@ -218,6 +278,7 @@ class PlaylistController extends Controller
     public function show(Request $request, int $idPlaylist)
     {
         if ($request->routeIs('playlist')) {
+
         $playlist = Playlist::find($idPlaylist);
         if(is_null($playlist))
             return abort(404); //Redirige vers 404 not found
@@ -285,12 +346,17 @@ class PlaylistController extends Controller
         'playlist' => 'required',
         'description' => 'required'
         ], [
+
         'id_playlist.required' => 'L\'ID de la playlist est manquant.',
         'playlist.required' => 'Veuillez entrer le nom de la playlist.',
         'description.required' => 'Veuillez entrer une description.',
         ]);
 
         if ($validation->fails()) {
+
+            if ($request->wantsJson()) {
+                return response()->json(['erreurs' => $validation->errors()], 403);
+            }
             return back()->withErrors($validation->errors())->withInput();
         }
 
@@ -300,7 +366,18 @@ class PlaylistController extends Controller
         $playlist->playlist = $contenuFormulaire['playlist'];
         $playlist->description = $contenuFormulaire['description'];
 
-        if ($playlist->save()) {
+        $succes = $playlist->save();
+
+        // Réponse pour une requête asynchrone (Fetch)
+        if ($request->wantsJson()) {
+            if ($succes) {
+                return response()->json(['succes' => 'La modification de la playlist a bien fonctionné.']);
+            }
+            return response()->json(['erreur' => 'La modification de la playlist n\'a pas fonctionné.'], 500);
+        }
+
+        // Réponse standard (Redirection)
+        if ($succes) {
             session()->flash('succes', 'La modification de la playlist a bien fonctionné.');
         } else {
             session()->flash('erreur', 'La modification de la playlist n\'a pas fonctionné.');

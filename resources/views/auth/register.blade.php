@@ -41,11 +41,20 @@
             </div>
 
             <div class="auth-field-wrap">
-                <label class="auth-label" for="country">Pays</label>
+                <label class="auth-label" for="id_country">Pays</label>
                 <div class="auth-input-wrap">
-                    <input id="country" class="auth-input" type="text" name="country" value="{{ old('country') }}" required autocomplete="country-name" placeholder="Pays">
+                    <select id="id_country" class="auth-input" name="id_country" required>
+                        <option value="">Sélectionnez un pays</option>
+                        {{-- Boucle foreach pour allez chercher les pays dans la base de données --}}
+                        @foreach($countries as $country)
+                            <option value="{{ $country->id_country }}" {{ old('id_country') == $country->id_country ? 'selected' : '' }}>
+                                {{ $country->name_country }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
-                <x-input-error :messages="$errors->get('country')" class="mt-2" />
+
+                <x-input-error :messages="$errors->get('id_country')" class="mt-2" />
             </div>
         </div>
 
@@ -54,8 +63,8 @@
         <button type="submit" class="auth-cta">S'inscrire</button>
 
         <div class="auth-footnote">
-            <span>Deja un compte ?</span>
-            <a class="auth-link" href="{{ route('login') }}">connexion</a>
+            <span>Déja un compte ?</span>
+            <a class="auth-link" href="{{ route('login') }}">Connexion</a>
         </div>
     </form>
 </x-guest-layout>

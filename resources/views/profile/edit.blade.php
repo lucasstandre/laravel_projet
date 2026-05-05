@@ -1,27 +1,51 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: #ffc500; font-style: italic;">
+            {{ __('Mon Profil') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow-sm sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
+    <div style="background: linear-gradient(105deg, #01060f 0%, #03152d 52%, #04142b 100%); color: #dbe7ff; font-family: 'Manrope', sans-serif; min-height: 100vh; padding: 2rem;">
+        <div style="max-width: 900px; margin: 0 auto;">
+            <!-- Informations de profil -->
+            <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
+                    <div>
+                    @include('profile.update-profile-information-form')
                 </div>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow-sm sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
+            <!-- Mot de passe -->
+            <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
+                    <div>
+                    @include('profile.update-password-form')
                 </div>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow-sm sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
+            <!-- Médias sociaux -->
+            <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
+                    <div>
+                    @include('profile.manage-media-socials-form')
+                </div>
+            </div>
+
+            <!-- Pays -->
+            <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
+                    <div>
+                    @include('profile.manage-country-form')
+                </div>
+            </div>
+
+            <!-- Abonnement -->
+            <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
+                    <div>
+                    @include('profile.manage-subscription-form')
+                </div>
+            </div>
+
+            <!-- Supprimer le compte -->
+            <div style="margin-bottom: 2rem; padding: 2rem; background: rgba(28, 50, 84, 0.3); border: 1px solid rgba(126, 162, 211, 0.2); border-radius: 12px;">
+                    <div>
+                    @include('profile.delete-user-form')
                 </div>
             </div>
         </div>

@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\UserCollection;
 use App\Models\User;
+use App\Models\Country;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -11,29 +17,137 @@ use Illuminate\View\View;
 class UserController extends Controller
 {
     /**
+     * API: List all users with pagination
+     */
+    public function indexApi(Request $request): UserCollection
+    {
+        $search = $request->input('search', '');
+        $pays = $request->input('pays', '');
+        $perPage = $request->input('per_page', 10);
+
+        $query = User::with('country', 'subscription', 'mediaSocials');
+
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%');
+        }
+
+        if ($pays) {
+            $query->where('id_country', $pays);
+        }
+
+        $users = $query->orderBy('name')->paginate($perPage);
+
+        return new UserCollection($users->map(fn ($user) => new UserResource($user)));
+    }
+
+    /**
+     * API: Get single user by ID
+     */
+    public function showApi(User $user): UserResource
+    {
+        $user->load('country', 'subscription', 'mediaSocials');
+        return new UserResource($user);
+    }
+
+    /**
+     * API: Create new user (admin only)
+     */
+    public function storeApi(UserStoreRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'id_country' => $validated['id_country'] ?? null,
+            'role' => $validated['role'] ?? 2,
+            'status' => $validated['status'] ?? 0,
+        ]);
+
+        $user->load('country', 'subscription', 'mediaSocials');
+
+        return response()->json(
+            new UserResource($user),
+            201
+        );
+    }
+
+    /**
+     * API: Update user (admin or self)
+     */
+    public function updateApi(UserUpdateRequest $request, User $user): UserResource
+    {
+        $validated = $request->validated();
+
+        $updateData = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'id_country' => $validated['id_country'] ?? null,
+        ];
+
+        if (isset($validated['role']) && $request->user()->role === 1) {
+            $updateData['role'] = $validated['role'];
+        }
+
+        if (isset($validated['status']) && $request->user()->role === 1) {
+            $updateData['status'] = $validated['status'];
+        }
+
+        if (!empty($validated['password'])) {
+            $updateData['password'] = Hash::make($validated['password']);
+        }
+
+        $user->update($updateData);
+        $user->load('country', 'subscription', 'mediaSocials');
+
+        return new UserResource($user);
+    }
+
+    /**
+     * API: Delete user (admin only)
+     */
+    public function destroyApi(User $user): JsonResponse
+    {
+        $user->delete();
+        return response()->json(['message' => 'User deleted successfully'], 204);
+    }
+
+    /**
      * Display list of users with search
      */
     public function index(Request $request): View
     {
         $search = $request->input('search', '');
+        $pays = $request->input('pays', '');
         $filter = $request->input('filter', 'user');
 
-        $query = User::query()->withCount('playlists');
+        $query = User::query()->with('country')->withCount('playlists');
 
         if ($search) {
             $query->where('name', 'like', '%' . $search . '%');
         }
 
-        // Si search est vide, on ne fait pas la requete et on retourne une collection vide pour éviter de charger tous les utilisateurs
-        $users = $search
-            ? $query->orderBy('name')->paginate(10)->withQueryString()
-            : collect();
+        // Filter by country
+        if ($pays) {
+            $query->where('id_country', $pays);
+        }
+
+        // Toujours paginer les utilisateurs pour afficher la navigation (pagination)
+        // Si vous voulez limiter la charge, ajoutez des filtres ou une condition ici.
+        $users = $query->orderBy('name')->paginate(10)->withQueryString();
+
+        // Get all countries for the filter
+        $countries = Country::orderBy('name_country')->get();
 
         return view('users.index', [
             'users' => $users,
             'search' => $search,
+            'pays' => $pays,
             'filter' => $filter,
-            'hasSearched' => !empty($search)
+            'countries' => $countries,
+            'hasSearched' => !empty($search) || !empty($pays)
         ]);
     }
 
@@ -46,21 +160,22 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'country' => ['nullable', 'string', 'max:40'],
+            'id_country' => ['nullable', 'integer', 'exists:countries,id_country'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+
         ]);
 
         User::create([
             'name' => $validated['name'],
-            'country' => $validated['country'] ?? null,
+            'id_country' => $validated['id_country'] ?? null,
             'email' => $validated['email'],
             'status' => 0,
-            'role' => 3,
+            'role' => 2,
             'password' => Hash::make($validated['password']),
         ]);
 
-        return redirect()->route('users.index')->with('success', 'Utilisateur cree.');
+        return redirect(route('dashboard', absolute: false));
     }
 
     public function edit(User $user): View
@@ -72,14 +187,14 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'country' => ['nullable', 'string', 'max:40'],
+            'id_country' => ['nullable', 'integer', 'exists:countries,id_country'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
         $updateData = [
             'name' => $validated['name'],
-            'country' => $validated['country'] ?? null,
+            'id_country' => $validated['id_country'] ?? null,
             'email' => $validated['email'],
         ];
 

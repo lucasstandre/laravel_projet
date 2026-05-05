@@ -1,8 +1,4 @@
-@extends('layouts.main')
-
-@section('title', 'Utilisateurs - Sonora')
-
-@section('content')
+<x-app-layout>
 <div style="background: linear-gradient(105deg, #01060f 0%, #03152d 52%, #04142b 100%); color: #dbe7ff; font-family: 'Manrope', sans-serif; min-height: 100vh; padding: 2rem;">
     <div style="max-width: 1000px; margin: 0 auto;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
@@ -15,30 +11,42 @@
             </div>
         @endif
 
-        <!-- Tabs/Filtres -->
-        <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(126, 162, 211, 0.16); padding-bottom: 1rem; flex-wrap: wrap;">
-            @if ($hasSearched)
-                <a href="{{ route('users.index', ['search' => $search, 'filter' => 'playlist']) }}" style="padding: 0.5rem 1rem; border-radius: 9999px; background: rgba(126, 162, 211, {{ $filter == 'playlist' ? '0.3' : '0.18' }}); color: {{ $filter == 'playlist' ? '#f3f8ff' : 'rgb(196, 214, 241, 0.75)' }}; border: 1px solid rgba(126, 162, 211, 0.3); text-decoration: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 150ms ease;">Playlist</a>
-                <a href="{{ route('users.index', ['search' => $search, 'filter' => 'artiste']) }}" style="padding: 0.5rem 1rem; border-radius: 9999px; background: rgba(126, 162, 211, {{ $filter == 'artiste' ? '0.3' : '0.18' }}); color: {{ $filter == 'artiste' ? '#f3f8ff' : 'rgb(196, 214, 241, 0.75)' }}; border: none; text-decoration: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 150ms ease;">Artiste</a>
-                <a href="{{ route('users.index', ['search' => $search, 'filter' => 'album']) }}" style="padding: 0.5rem 1rem; border-radius: 9999px; background: rgba(126, 162, 211, {{ $filter == 'album' ? '0.3' : '0.18' }}); color: {{ $filter == 'album' ? '#f3f8ff' : 'rgb(196, 214, 241, 0.75)' }}; border: none; text-decoration: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 150ms ease;">Album</a>
-                <a href="{{ route('users.index', ['search' => $search, 'filter' => 'user']) }}" style="padding: 0.5rem 1rem; border-radius: 9999px; background: rgba(126, 162, 211, {{ $filter == 'user' ? '0.3' : '0.18' }}); color: {{ $filter == 'user' ? '#f3f8ff' : 'rgb(196, 214, 241, 0.75)' }}; border: 1px solid rgba(126, 162, 211, 0.3); text-decoration: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 150ms ease;">User</a>
-                <a href="{{ route('users.index', ['search' => $search, 'filter' => 'tracks']) }}" style="padding: 0.5rem 1rem; border-radius: 9999px; background: rgba(126, 162, 211, {{ $filter == 'tracks' ? '0.3' : '0.18' }}); color: {{ $filter == 'tracks' ? '#f3f8ff' : 'rgb(196, 214, 241, 0.75)' }}; border: none; text-decoration: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 150ms ease;">Tracks</a>
-            @endif
+        <!-- Filtre et recherche -->
+        <div class="flex gap-4 mb-6" style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <x-search-bar action="/users" placeholder="Trouver un utilisateur..." />
+            <form action="/users" method="GET" style="display: flex; gap: 1rem; align-items: flex-end;">
+                @csrf
+                @if (!empty($search))
+                    <input type="hidden" name="search" value="{{ $search }}">
+                @endif
+                <div style="display: flex; flex-direction: column;">
+                    <label style="color: rgb(196, 214, 241, 0.75); font-size: 0.9rem; margin-bottom: 0.4rem;">Pays</label>
+                    <select name="pays" style="padding: 0.6rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
+                        <option value="">-- Tous les pays --</option>
+                        @foreach($countries as $country)
+                            <option value="{{ $country->id_country }}" {{ $pays == $country->id_country ? 'selected' : '' }}>
+                                {{ $country->name_country }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="submit" style="padding: 0.6rem 1.2rem; border: none; border-radius: 8px; background: #ffc500; color: #0b1528; font-weight: 600; cursor: pointer;">Filtrer</button>
+            </form>
         </div>
 
-        <form method="GET" action="{{ route('users.index') }}" style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
-            <input type="text" name="search" placeholder="Filtrer par nom..." value="{{ $search }}" style="flex: 1; padding: 0.75rem 1.5rem; border: 1px solid rgba(126, 162, 211, 0.16); border-radius: 9999px; background: rgba(28, 50, 84, 0.78); color: #f1f7ff; font-size: 0.9rem;">
-            <button type="submit" style="padding: 0.75rem 1.5rem; border-radius: 9999px; background: #ffc500; color: #0b1528; border: none; font-weight: 800; cursor: pointer;">Filtrer</button>
-            @if ($search)
-                <a href="{{ route('users.index') }}" style="padding: 0.75rem 1.5rem; border-radius: 9999px; background: rgba(126, 162, 211, 0.18); color: #f1f7ff; border: 1px solid rgba(126, 162, 211, 0.3); text-decoration: none; font-weight: 600; cursor: pointer;">Réinitialiser</a>
-            @endif
-        </form>
+
 
         @if ($users->count() > 0)
             <p style="margin-bottom: 1rem; font-size: 0.9rem; color: rgb(196, 214, 241, 0.6);">
-
-
-                Résultats pour "<strong style="color: #ffc500;">{{ $search }}</strong>" ({{ $users->total() }} utilisateur(s))
+                Résultats
+                @if ($search)
+                    pour "<strong style="color: #ffc500;">{{ $search }}</strong>"
+                @endif
+                @if ($pays)
+                    @php $selectedCountry = $countries->find($pays); @endphp
+                    en <strong style="color: #ffc500;">{{ $selectedCountry->name_country ?? 'N/A' }}</strong>
+                @endif
+                ({{ $users->total() }} utilisateur(s))
             </p>
 
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
@@ -57,10 +65,17 @@
                     @foreach ($users as $user)
                         <tr style="border-bottom: 1px solid rgba(126, 162, 211, 0.1); transition: background 150ms ease;">
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->name }}</td>
-                            <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->country ?? '-' }}</td>
+                            <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">
+                                @php
+                                    $countryName = $user->country_name ?? '-';
+                                    // DEBUG
+                                    error_log("User: {$user->name}, id_country: {$user->id_country}, country_name: {$countryName}");
+                                @endphp
+                                {{ $countryName }}
+                            </td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->email }}</td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">
-                                @auth
+                                @if (auth()->check() && (int) auth()->user()->role === 1)
                                     <form method="POST" action="{{ route('users.status.update', $user) }}" style="display: inline-flex; gap: 0.4rem; align-items: center;">
                                         @csrf
                                         @method('PUT')
@@ -73,10 +88,10 @@
                                     </form>
                                 @else
                                     {{ (int) $user->status === 1 ? 'Prive' : 'Public' }}
-                                @endauth
+                                @endif
                             </td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">
-                                @auth
+                                @if (auth()->check() && (int) auth()->user()->role === 1)
                                     <form method="POST" action="{{ route('users.role.update', $user) }}" style="display: inline-flex; gap: 0.4rem; align-items: center;">
                                         @csrf
                                         @method('PUT')
@@ -96,19 +111,19 @@
                                     @else
                                         User
                                     @endif
-                                @endauth
+                                @endif
                             </td>
                             <td style="padding: 0.75rem 1rem; color: #dbe7ff; font-size: 0.9rem;">{{ $user->playlists_count }}</td>
                             <td style="padding: 0.75rem 1rem;">
                                 <a href="{{ route('users.show', $user) }}" style="color: rgb(196, 214, 241, 0.75); text-decoration: none; font-size: 0.8rem;">Voir</a>
-                                @auth
+                                @if (auth()->check() && (int) auth()->user()->role === 1)
                                     <a href="{{ route('users.edit', $user) }}" style="margin-left: 0.7rem; color: #ffc500; text-decoration: none; font-size: 0.8rem;">Modifier</a>
                                     <form method="POST" action="{{ route('users.destroy', $user) }}" style="display: inline; margin-left: 0.7rem;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" onclick="return confirm('Supprimer cet utilisateur ?')" style="background: transparent; border: none; padding: 0; color: #ff7a7a; font-size: 0.8rem; cursor: pointer;">Supprimer</button>
                                     </form>
-                                @endauth
+                                @endif
                             </td>
                         </tr>
                     @endforeach
@@ -119,11 +134,22 @@
                 {{ $users->links() }}
             </div>
         @elseif ($hasSearched)
-            <p style="text-align: center; color: rgb(196, 214, 241, 0.6); padding: 2rem;">Aucun utilisateur trouvé pour "<strong style="color: #ffc500;">{{ $search }}</strong>".</p>
+            <p style="text-align: center; color: rgb(196, 214, 241, 0.6); padding: 2rem;">
+                Aucun utilisateur trouvé
+                @if ($search)
+                    pour "<strong style="color: #ffc500;">{{ $search }}</strong>"
+                @endif
+                @if ($pays)
+                    @php $selectedCountry = $countries->find($pays); @endphp
+                    en <strong style="color: #ffc500;">{{ $selectedCountry->name_country ?? 'N/A' }}</strong>
+                @endif
+                .
+            </p>
         @else
             <p style="text-align: center; color: rgb(196, 214, 241, 0.6); padding: 3rem; font-size: 1.1rem;">
-                Tapez le nom d'un utilisateur pour commencer...
+                Tapez le nom d'un utilisateur ou sélectionnez un pays pour commencer...
             </p>
         @endif
     </div>
 </div>
+</x-app-layout>

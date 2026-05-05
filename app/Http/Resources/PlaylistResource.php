@@ -19,8 +19,11 @@ class PlaylistResource extends JsonResource
         // la construction d’une instance de cette classe.
         return [
         'id_playlist'   => $this->id_playlist,
+        'id_creator' => $this->id_creator,
         'playlist'      => $this->playlist,
         'description'  => $this->description,
+        'link' =>$this->link,
+        'chansons' => $this->chansons,
         ];
     }
 }

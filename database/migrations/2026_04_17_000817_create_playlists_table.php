@@ -24,7 +24,7 @@ return new class extends Migration
         });
         // foreign key
         Schema::table('playlists', function (Blueprint $table) {
-            $table->foreign('id_creator')->references('id')->on('users');
+            $table->foreign('id_creator')->references('id')->on('users')->onDelete('cascade'); // on ajoute le cascade
         });
 
     }

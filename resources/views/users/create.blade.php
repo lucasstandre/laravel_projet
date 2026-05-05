@@ -1,8 +1,4 @@
-@extends('layouts.main')
-
-@section('title', 'Ajouter un utilisateur')
-
-@section('content')
+<x-app-layout>
 <div style="background: linear-gradient(105deg, #01060f 0%, #03152d 52%, #04142b 100%); min-height: 100vh; padding: 2rem; color: #dbe7ff;">
     <div style="max-width: 700px; margin: 0 auto;">
         <h1 style="margin: 0 0 1rem;">Ajouter un utilisateur</h1>
@@ -20,7 +16,17 @@
         <form method="POST" action="{{ route('users.store') }}" style="display: grid; gap: 0.8rem;">
             @csrf
             <input type="text" name="name" value="{{ old('name') }}" placeholder="Nom" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
-            <input type="text" name="country" value="{{ old('country') }}" placeholder="Pays" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
+            <select name="id_country" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
+                <option value="">-- Sélectionnez un pays --</option>
+                @php
+                    $countries = \App\Models\Country::all();
+                @endphp
+                @foreach($countries as $country)
+                    <option value="{{ $country->id_country }}" {{ old('id_country') == $country->id_country ? 'selected' : '' }}>
+                        {{ $country->name_country }}
+                    </option>
+                @endforeach
+            </select>
             <input type="email" name="email" value="{{ old('email') }}" placeholder="Email" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
             <input type="password" name="password" placeholder="Mot de passe" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
             <input type="password" name="password_confirmation" placeholder="Confirmer le mot de passe" style="padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff;">
@@ -32,4 +38,4 @@
         </form>
     </div>
 </div>
-@endsection
+</x-app-layout>
