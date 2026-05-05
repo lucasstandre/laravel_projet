@@ -14,6 +14,8 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Country;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RegistrationConfirmation;
 
 class RegisteredUserController extends Controller
 {
@@ -48,6 +50,14 @@ class RegisteredUserController extends Controller
             'role' => 2,
             'password' => Hash::make($request->password),
         ]);
+
+        // Send confirmation email (best-effort)
+        try {
+            Mail::to($user->email)->send(new RegistrationConfirmation($user));
+        } catch (\Exception $e) {
+            // don't block registration if mail fails; log if needed
+            // logger()->error('Mail send failed: ' . $e->getMessage());
+        }
 
         event(new Registered($user));
 

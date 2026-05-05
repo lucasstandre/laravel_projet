@@ -56,7 +56,13 @@ class User extends Authenticatable
     protected static function booted(): void
     {
         static::deleting(function (User $user) {
+            // remove related records to avoid foreign key constraint errors
             $user->chansons()->delete();
+            $user->playlists()->delete();
+            $user->mediaSocials()->delete();
+            if ($user->subscription) {
+                $user->subscription()->delete();
+            }
         });
 
         static::created(function (User $user) {

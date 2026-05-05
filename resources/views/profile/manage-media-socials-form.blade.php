@@ -12,7 +12,7 @@
         <!-- Ajouter un média social -->
         <div style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(28, 50, 84, 0.5); border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.2);">
             <h3 style="font-size: 1.1rem; font-weight: 600; color: #ffc500; margin: 0 0 1rem 0;">Ajouter un média social</h3>
-            <form action="{{ route('profile.media.store') }}" method="POST" style="display: grid; gap: 1rem;">
+            <form id="addMediaForm" action="{{ route('profile.media.store') }}" method="POST" style="display: grid; gap: 1rem;">
                 @csrf
 
                 <div>
@@ -74,7 +74,7 @@
                                 </button>
 
                                 <!-- Supprimer -->
-                                <form action="{{ route('profile.media.destroy', $media) }}" method="POST" style="display: inline;">
+                                <form class="deleteMediaForm" action="{{ route('profile.media.destroy', $media) }}" method="POST" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" onclick="return confirm('Supprimer ce média social ?')"
@@ -90,7 +90,7 @@
                             <div style="position: relative; top: 5rem; margin: 0 auto; padding: 2rem; border: 1px solid rgba(126, 162, 211, 0.3); width: 90%; max-width: 500px; background: linear-gradient(105deg, #01060f 0%, #03152d 52%, #04142b 100%); border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);">
                                 <h3 style="font-size: 1.2rem; font-weight: 700; color: #ffc500; margin: 0 0 1.5rem 0;">Modifier le média social</h3>
 
-                                <form action="{{ route('profile.media.update', $media) }}" method="POST" style="display: grid; gap: 1rem;">
+                                <form class="editMediaForm" action="{{ route('profile.media.update', $media) }}" method="POST" style="display: grid; gap: 1rem;" data-id="{{ $media->id }}">
                                     @csrf
                                     @method('PUT')
 
@@ -159,4 +159,65 @@ function closeEditModal(mediaId) {
     const modal = document.getElementById('editModal-' + mediaId);
     modal.style.display = 'none';
 }
+
+// AJAX handlers for media social forms (uses fetch + FormData)
+document.addEventListener('DOMContentLoaded', function () {
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+    // Add media
+    const addForm = document.getElementById('addMediaForm');
+    if (addForm) {
+        addForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const fd = new FormData(addForm);
+            try {
+                const res = await fetch(addForm.action, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrf },
+                    body: fd,
+                });
+                if (res.ok) window.location.reload();
+                else alert('Erreur lors de l\'ajout');
+            } catch (err) { console.error(err); alert('Erreur réseau'); }
+        });
+    }
+
+    // Edit media forms
+    document.querySelectorAll('.editMediaForm').forEach(form => {
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const fd = new FormData(form);
+            // Ensure method spoofing for PUT
+            fd.set('_method', 'PUT');
+            try {
+                const res = await fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrf },
+                    body: fd,
+                });
+                if (res.ok) window.location.reload();
+                else alert('Erreur lors de la mise à jour');
+            } catch (err) { console.error(err); alert('Erreur réseau'); }
+        });
+    });
+
+    // Delete media
+    document.querySelectorAll('.deleteMediaForm').forEach(form => {
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            if (!confirm('Supprimer ce média social ?')) return;
+            const fd = new FormData();
+            fd.set('_method', 'DELETE');
+            try {
+                const res = await fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrf },
+                    body: fd,
+                });
+                if (res.ok) window.location.reload();
+                else alert('Erreur lors de la suppression');
+            } catch (err) { console.error(err); alert('Erreur réseau'); }
+        });
+    });
+});
 </script>

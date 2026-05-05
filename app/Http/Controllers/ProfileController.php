@@ -25,8 +25,6 @@ class ProfileController extends Controller
         'YouTube',
         'LinkedIn',
         'Twitch',
-        'Spotify',
-        'SoundCloud',
         'Snapchat',
     ];
 
