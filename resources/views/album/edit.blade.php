@@ -66,7 +66,10 @@
         <form method="POST" action="{{ route('albums.destroy', $album) }}" style="margin-top: 0.5rem;">
             @csrf
             @method('DELETE')
-            <button type="submit" class="btn-delete">Supprimer l'album</button>
+            <button type="submit" class="btn-delete"
+                    onclick="return confirm('Etes-vous sûr de vouloir supprimer l\'album « {{ $album->nom }} » ?')">
+                    Supprimer
+            </button>
         </form>
 
         {{-- Tracks --}}
@@ -80,7 +83,10 @@
                     <form method="POST" action="{{ route('chansons.retirerAlbum', $chanson) }}">
                         @csrf
                         @method('PATCH')
-                        <button type="submit" class="btn-track-delete">✖</button>
+                        <button type="submit" class="btn-track-delete"
+                                onclick="return confirm('Etes-vous sûr de vouloir retirer la chanson « {{ $chanson->nom }} » de cet album ?')">
+                                ✖
+                        </button>
                     </form>
                 </div>
             </div>

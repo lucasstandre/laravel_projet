@@ -18,6 +18,15 @@
                     <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')" class="text-gray-400 hover:text-yellow-500 transition-colors uppercase text-[10px] font-black tracking-widest">
                         {{ __('Utilisateurs') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('albums')" :active="request()->routeIs('albums')" class="text-gray-400 hover:text-yellow-500 transition-colors uppercase text-[10px] font-black tracking-widest">
+                        {{ __('Albums') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('chansons')" :active="request()->routeIs('chansons')" class="text-gray-400 hover:text-yellow-500 transition-colors uppercase text-[10px] font-black tracking-widest">
+                        {{ __('Chansons') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('chansons.create')" :active="request()->routeIs('chansons.create')" class="text-gray-400 hover:text-yellow-500 transition-colors uppercase text-[10px] font-black tracking-widest">
+                        {{ __('Ajouter une chanson') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -73,6 +82,9 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Dashboard</x-responsive-nav-link>
             <x-responsive-nav-link :href="route('playlists')" :active="request()->routeIs('playlists')" class="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Playlists</x-responsive-nav-link>
             <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')" class="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Utilisateurs</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('albums')" :active="request()->routeIs('albums')" class="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Albums</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('chansons')" :active="request()->routeIs('chansons')" class="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Chansons</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('chansons.create')" :active="request()->routeIs('chansons.create')" class="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Ajouter une chanson</x-responsive-nav-link>
         </div>
         <div class="pt-4 pb-1 border-t border-white/5">
             <div class="px-4 py-2 border-b border-white/5 mb-2">

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Pays;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,31 +17,41 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Sonora',
-            'email' => 'test@example.com',
-            'password' => Hash::make('password'), // forcer a faire un password password pcq ca marchait pu
-            'role' => 1,
-            'country' => 'Canada',
-        ]);
-        User::factory()->create([
-            'name' => 'Test User 2',
-            'email' => 'test2@example.com',
-            'password' => Hash::make('password'),
-            'role' => 1,
-            'country' => 'France',
-        ]);
         $this->call([
-        // Vous pouvez ajouter d’autres "seeders" en les séparant par des virgules.
+            CountrySeeder::class,
+            PaysSeeder::class,
             GenreSeeder::class,
+        ]);
+
+        //Prend canada aussi non le premier
+        $canada = \App\Models\Country::first();
+
+        \App\Models\User::factory()->create([
+            'name' => 'Artiste Un',
+            'email' => 'artiste1@example.com',
+            'id_country' => $canada->id_country,
+        ]); // Deviendra l'ID 1
+
+        \App\Models\User::factory()->create([
+            'name' => 'Artiste Deux',
+            'email' => 'artiste2@example.com',
+            'id_country' => $canada->id_country,
+        ]); // Deviendra l'ID 2
+
+        \App\Models\User::factory()->create([
+            'name' => 'Artiste Trois',
+            'email' => 'artiste3@example.com',
+            'id_country' => $canada->id_country,
+        ]);
+
+
+        $this->call([
+            // Vous pouvez ajouter d’autres "seeders" en les séparant par des virgules.
             PlaylistSeeder::class,
             AlbumSeeder::class,
             ChansonSeeder::class,
             PlaylistChansonSeeder::class,
             CountrySeeder::class,
-            PaysSeeder::class,
             LocalisationSeeder::class,
         ]);
     }

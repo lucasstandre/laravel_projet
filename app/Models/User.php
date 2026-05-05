@@ -35,6 +35,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function pays()
+    {
+        return $this->belongsTo(\App\Models\Pays::class, 'id_country', 'id_pays');
+    }
     public function playlists(): HasMany
     {
     // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.

@@ -27,14 +27,7 @@
 
 <div class="create-page">
 
-    {{-- Sidebar --}}
-    <div class="create-sidebar">
-        <div class="brand">ArtistHub</div>
-        <a href="#">Profile</a>
-        <a href="#" class="active">Musique</a>
-        <a href="#">Analytics</a>
-        <a href="{{ route('settings') }}">Settings</a>
-    </div>
+
 
     {{-- Formulaire --}}
     <div class="create-main">
