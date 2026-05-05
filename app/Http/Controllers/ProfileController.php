@@ -13,9 +13,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
+    private const MEDIA_SOCIAL_OPTIONS = [
+        'Facebook',
+        'Instagram',
+        'X',
+        'TikTok',
+        'YouTube',
+        'LinkedIn',
+        'Twitch',
+        'Spotify',
+        'SoundCloud',
+        'Snapchat',
+    ];
+
     /**
      * Get the authenticated user's profile.
      */
@@ -51,6 +65,7 @@ class ProfileController extends Controller
             'mediaSocials' => $mediaSocials,
             'countries' => $countries,
             'subscription' => $subscription,
+            'mediaSocialOptions' => self::MEDIA_SOCIAL_OPTIONS,
         ]);
     }
 
@@ -97,8 +112,8 @@ class ProfileController extends Controller
     public function storeMediaSocial(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
-            'url' => ['required', 'string', 'max:255'],
+            'nom' => ['required', Rule::in(self::MEDIA_SOCIAL_OPTIONS)],
+            'url' => ['required', 'regex:/^https:\/\/.+$/', 'max:255'],
             'icone' => ['nullable', 'string', 'max:50'],
         ]);
 
@@ -118,8 +133,8 @@ class ProfileController extends Controller
         }
 
         $validated = $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
-            'url' => ['required', 'string', 'max:255'],
+            'nom' => ['required', Rule::in(self::MEDIA_SOCIAL_OPTIONS)],
+            'url' => ['required', 'regex:/^https:\/\/.+$/', 'max:255'],
             'icone' => ['nullable', 'string', 'max:50'],
         ]);
 

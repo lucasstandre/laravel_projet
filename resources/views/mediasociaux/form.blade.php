@@ -7,8 +7,10 @@
 
 <div class="mb-3">
     <label class="form-label">URL</label>
-    <input type="url" name="url" class="form-control @error('url') is-invalid @enderror"
-           value="{{ old('url', $item->url ?? '') }}" required>
+        <input type="url" name="url" class="form-control @error('url') is-invalid @enderror"
+            value="{{ old('url', $item->url ?? '') }}" required
+            pattern="https://.*"
+            title="L'URL doit commencer par https://">
     @error('url') <div class="invalid-feedback">{{ $message }}</div> @enderror
 </div>
 

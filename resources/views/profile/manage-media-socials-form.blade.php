@@ -17,9 +17,14 @@
 
                 <div>
                     <label for="nom" style="display: block; font-size: 0.9rem; font-weight: 600; color: rgb(196, 214, 241, 0.75); margin-bottom: 0.4rem;">Nom du réseau</label>
-                    <input type="text" name="nom" id="nom" placeholder="Twitter, Instagram, LinkedIn..."
+                    <select name="nom" id="nom"
                         style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff; font-size: 0.95rem; box-sizing: border-box;"
                         required>
+                        <option value="" disabled {{ old('nom') ? '' : 'selected' }}>Choisir un réseau</option>
+                        @foreach ($mediaSocialOptions as $option)
+                            <option value="{{ $option }}" {{ old('nom') === $option ? 'selected' : '' }}>{{ $option }}</option>
+                        @endforeach
+                    </select>
                     @error('nom')
                         <p style="margin-top: 0.4rem; font-size: 0.85rem; color: #ff7a7a;">{{ $message }}</p>
                     @enderror
@@ -28,6 +33,9 @@
                 <div>
                     <label for="url" style="display: block; font-size: 0.9rem; font-weight: 600; color: rgb(196, 214, 241, 0.75); margin-bottom: 0.4rem;">URL du profil</label>
                     <input type="text" name="url" id="url"
+                        placeholder="https://"
+                        pattern="https://.*"
+                        title="L'URL doit commencer par https://"
                         style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff; font-size: 0.95rem; box-sizing: border-box;"
                         required>
                     @error('url')
@@ -88,14 +96,22 @@
 
                                     <div>
                                         <label for="edit-nom-{{ $media->id }}" style="display: block; font-size: 0.9rem; font-weight: 600; color: rgb(196, 214, 241, 0.75); margin-bottom: 0.4rem;">Nom</label>
-                                        <input type="text" name="nom" id="edit-nom-{{ $media->id }}"
+                                        <select name="nom" id="edit-nom-{{ $media->id }}"
                                             style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff; font-size: 0.95rem; box-sizing: border-box;"
                                             required>
+                                            <option value="" disabled>Choisir un réseau</option>
+                                            @foreach ($mediaSocialOptions as $option)
+                                                <option value="{{ $option }}" {{ $media->nom === $option ? 'selected' : '' }}>{{ $option }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
 
                                     <div>
                                         <label for="edit-url-{{ $media->id }}" style="display: block; font-size: 0.9rem; font-weight: 600; color: rgb(196, 214, 241, 0.75); margin-bottom: 0.4rem;">URL</label>
                                         <input type="text" name="url" id="edit-url-{{ $media->id }}"
+                                            placeholder="https://"
+                                            pattern="https://.*"
+                                            title="L'URL doit commencer par https://"
                                             style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(126, 162, 211, 0.3); background: rgba(28, 50, 84, 0.7); color: #f1f7ff; font-size: 0.95rem; box-sizing: border-box;"
                                             required>
                                     </div>
@@ -123,7 +139,7 @@
 <script>
 function openEditModal(mediaId, nom, url) {
     const modal = document.getElementById('editModal-' + mediaId);
-    const nomInput = modal.querySelector('input[name="nom"]');
+    const nomInput = modal.querySelector('select[name="nom"]');
     const urlInput = modal.querySelector('input[name="url"]');
 
     nomInput.value = nom;

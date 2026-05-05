@@ -45,10 +45,20 @@ class User extends Authenticatable
     // Il faut préciser la classe (le modèle) avec laquelle la relation s’établit.
     return $this->hasMany(Ecoute::class, 'id_utilisateur');
     }
+
+    public function chansons(): HasMany
+    {
+        return $this->hasMany(Chanson::class, 'id_artiste');
+    }
+
     // quand ca cree un user ca cree aussi la playlist de like et un abonnement par défaut
     // plus facil a utiliser que boot !!!
     protected static function booted(): void
     {
+        static::deleting(function (User $user) {
+            $user->chansons()->delete();
+        });
+
         static::created(function (User $user) {
             // Créer la playlist "Liked"
             Playlist::create([
