@@ -164,7 +164,7 @@ function closeEditModal(mediaId) {
 document.addEventListener('DOMContentLoaded', function () {
     const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-    // Add media
+    // Add media sociaux
     const addForm = document.getElementById('addMediaForm');
     if (addForm) {
         addForm.addEventListener('submit', async function (e) {
