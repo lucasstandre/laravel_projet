@@ -93,11 +93,12 @@ window.onload = () => {
                     return response.json();
                 })
                 .then(data => {
+                    console.log("Données reçues du serveur :", data);
                     if (data.erreurs) {
                         // erreurs
                         let messages = [];
-                        for (let cle in data.erreurs) {
-                            messages.push(data.erreurs[cle].join('\n'));
+                        for (let e in data.erreurs) {
+                            messages.push(data.erreurs[e].join('\n'));
                         }
                         alert("Erreur de validation :\n" + messages.join('\n'));
                     } else if (data.erreur) {
@@ -105,7 +106,7 @@ window.onload = () => {
                     } else {
                         alert("Succès : " + data.succes);
                         // si ca marche on redirige
-                        window.location.href = "{{ route('playlists') }}";
+                       // window.location.href = "{{ route('playlists') }}";
                     }
                 })
                 .catch(error => {

@@ -389,8 +389,22 @@ class PlaylistController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Playlist $playlist)
+    public function destroy($id)
     {
-        //
+        $playlist = Playlist::find($id);
+
+        if (!$playlist) {
+            return response()->json(['message' => 'Playlist not found.'], 404);
+        }
+
+        // si t user
+        if ($playlist->id_creator !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
+        $playlist->delete();
+
+        return response()->json(['message' => 'Playlist successfully deleted.'], 200);
     }
+
 }

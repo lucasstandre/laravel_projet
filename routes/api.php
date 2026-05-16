@@ -65,6 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/mesPlaylists', 'mesPlaylists')->name('mesPlaylistsApi');
         Route::post('/playlist/{id}/generateLink', 'generateLink')->name('generateLinkApi');
         Route::put('/playlist/{id}', 'update')->name('modificationPlaylistApi');
+        Route::delete('/playlist/{id}', 'destroy')->name('deletePlaylistApi');
         Route::post('/insertion/playlist', 'store')->name('insertionPlaylistApi');
         Route::post('/copy/playlist/{id}', 'store')->name('copyPlaylistApi');
         Route::get('/mesLikes', 'likePlaylist')->name('likePlaylistApi');
