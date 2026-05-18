@@ -401,7 +401,7 @@ class PlaylistController extends Controller
         if ($playlist->id_creator !== Auth::id()) {
             return response()->json(['message' => 'Unauthorized.'], 403);
         }
-
+        $playlist->chansons()->detach(); // enleve les toune
         $playlist->delete();
 
         return response()->json(['message' => 'Playlist successfully deleted.'], 200);
